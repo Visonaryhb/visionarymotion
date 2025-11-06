@@ -169,41 +169,14 @@ function createYouTubeIframe(ytId) {
   // allow autoplay & picture-in-picture where possible; fullscreen allowed via allowFullscreen
   iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
   iframe.allowFullscreen = true;
-  // include playsinline and enablejsapi to allow programmatic control; autoplay muted to maximize cross-browser start
-  // we include an origin param to satisfy YouTube API requirements. In some proxied/dev environments the visible
-  // window.location.origin may differ from the referrer/forwarded host that YouTube sees; try to pick the most
-  // appropriate origin so YouTube initializes the iframe API correctly.
-  let originCandidate = window.location.origin;
-  try {
-    if (document && document.referrer) {
-      const refOrigin = new URL(document.referrer).origin;
-      // prefer the referrer origin when it differs from location.origin (covers some Codespaces/preview proxies)
-      if (refOrigin && refOrigin !== originCandidate) originCandidate = refOrigin;
-    }
-  } catch (e) {
-    // ignore malformed referrer
-  }
-  // If we're running inside a preview/forwarding host (codespaces / github.dev / app.github.dev), these
-  // origins are often rewritten by the preview proxy and using them as the iframe 'origin' can break
-  // the YouTube embedded player API. Detect common preview hosts and omit the origin param in that case.
-  try {
-    const previewHosts = ['github.dev', 'app.github.dev', 'githubpreview.dev', 'preview.app.github.dev'];
-    for (const ph of previewHosts) {
-      if (originCandidate && originCandidate.indexOf(ph) !== -1) {
-        originCandidate = '';
-        break;
-      }
-    }
-  } catch (e) {
-    // ignore
-  }
-  const params = new URLSearchParams({ rel: '0', showinfo: '0', modestbranding: '1', playsinline: '1', enablejsapi: '1', autoplay: '1', mute: '1' });
-  if (originCandidate) params.set('origin', originCandidate);
-  // keep the chosen origin on the iframe for debugging
-  iframe.dataset.embedOrigin = originCandidate;
-  // set an id so we can postMessage commands to this iframe
+  // Use a minimal, privacy-friendly embed by default (no enablejsapi/origin).
+  // This increases the chance the iframe will play inline under proxied/preview environments.
+  const params = new URLSearchParams({ rel: '0', modestbranding: '1', playsinline: '1', autoplay: '1', mute: '1' });
+  iframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?${params.toString()}`;
+  // mark as a simple embed so calling code can decide whether to attempt JS‑API control later
+  iframe.dataset.simpleEmbed = '1';
+  // give it a predictable id for debugging
   iframe.id = `yt-player-${Math.random().toString(36).slice(2,9)}`;
-  iframe.src = `https://www.youtube.com/embed/${ytId}?${params.toString()}`;
   return iframe;
 }
 
