@@ -556,6 +556,19 @@ closeButtons.forEach(button => {
   button.addEventListener('click', closeModal);
 });
 
+// Delegated handler: catch any click on elements with [data-close] (covers dynamic/positioned buttons)
+document.addEventListener('click', (e) => {
+  try {
+    const btn = e.target.closest && e.target.closest('[data-close]');
+    if (btn) {
+      e.preventDefault();
+      closeModal();
+    }
+  } catch (err) {
+    // ignore
+  }
+});
+
 // Close on escape key
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && modal.classList.contains('is-active')) {
