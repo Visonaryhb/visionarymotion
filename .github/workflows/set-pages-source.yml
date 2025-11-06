@@ -1,0 +1,36 @@
+name: Ensure Pages source is gh-pages
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  set-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up repo info
+        run: |
+          echo "REPO=${GITHUB_REPOSITORY}" >> $GITHUB_ENV
+          echo "OWNER=$(echo ${GITHUB_REPOSITORY} | cut -d'/' -f1)" >> $GITHUB_ENV
+          echo "REPO_NAME=$(echo ${GITHUB_REPOSITORY} | cut -d'/' -f2)" >> $GITHUB_ENV
+
+      - name: Configure Pages source to gh-pages
+        env:
+          GITHUB_API: https://api.github.com
+        run: |
+          echo "Setting Pages source to gh-pages for $GITHUB_REPOSITORY"
+          curl -sS -X PUT "$GITHUB_API/repos/${GITHUB_REPOSITORY}/pages" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{"source":{"branch":"gh-pages","path":"/"}}' \
+            | jq -r '.' || true
+
+      - name: Confirm Pages status
+        run: |
+          sleep 3
+          curl -sS "https://api.github.com/repos/${GITHUB_REPOSITORY}/pages" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" | jq -r '.'
