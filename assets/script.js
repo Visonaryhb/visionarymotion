@@ -353,7 +353,17 @@ videoCards.forEach(card => {
 
 function closeModal() {
   if (currentVideo) {
-    currentVideo.pause();
+    try {
+      const tag = (currentVideo.tagName || '').toUpperCase();
+      if (tag === 'VIDEO') {
+        currentVideo.pause();
+      } else if (tag === 'IFRAME') {
+        // defensively stop iframe playback (YouTube) by clearing src
+        try { currentVideo.src = ''; } catch (e) { /* ignore */ }
+      }
+    } catch (e) {
+      // ignore
+    }
     currentVideo = null;
   }
   modal.setAttribute('aria-hidden', 'true');
