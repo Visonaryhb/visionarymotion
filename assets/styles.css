@@ -110,12 +110,36 @@ h1, h2, h3, h4 {
   color: var(--color-text);
   font-weight: 500;
   cursor: pointer;
-  padding: 0.5rem 1rem;
-  transition: all 0.2s;
+  padding: 0; /* inline like links */
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 100%;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
 .contact-trigger:hover {
   color: var(--color-primary);
+}
+
+.contact-trigger:focus {
+  outline: none;
+  text-decoration: underline;
+}
+
+/* make it visually match the nav links on small screens */
+@media (max-width: 768px) {
+  .contact-trigger {
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.03);
+  }
+  .contact-trigger:focus {
+    box-shadow: 0 0 0 3px rgba(196,148,94,0.15);
+  }
 }
 
 .contact-popup {
