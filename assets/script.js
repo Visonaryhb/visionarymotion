@@ -117,6 +117,66 @@ async function generateThumbnails() {
 // run generation on DOM ready
 document.addEventListener('DOMContentLoaded', () => generateThumbnails());
 
+// --- Video category filters ---
+function buildCategoryFilters() {
+  try {
+    const grid = document.getElementById('video-grid') || document.querySelector('.video-grid');
+    if (!grid) return;
+    const cards = Array.from(grid.querySelectorAll('.video-card'));
+    const categories = Array.from(new Set(cards.map(c => (c.dataset.category || '').trim()).filter(Boolean)));
+
+    const filtersContainer = document.getElementById('video-filters');
+    if (!filtersContainer) return;
+    filtersContainer.innerHTML = '';
+
+    // create 'Alle' button
+    const allBtn = document.createElement('button');
+    allBtn.className = 'filter-btn active';
+    allBtn.type = 'button';
+    allBtn.setAttribute('aria-pressed', 'true');
+    allBtn.innerText = 'Alle';
+    allBtn.addEventListener('click', () => applyFilter(null, allBtn));
+    filtersContainer.appendChild(allBtn);
+
+    categories.forEach(cat => {
+      const b = document.createElement('button');
+      b.className = 'filter-btn';
+      b.type = 'button';
+      b.setAttribute('data-cat', cat);
+      b.setAttribute('aria-pressed', 'false');
+      b.innerText = cat;
+      b.addEventListener('click', () => applyFilter(cat, b));
+      filtersContainer.appendChild(b);
+    });
+  } catch (e) {
+    console.warn('buildCategoryFilters failed', e);
+  }
+}
+
+function applyFilter(category, btn) {
+  const grid = document.getElementById('video-grid') || document.querySelector('.video-grid');
+  if (!grid) return;
+  const cards = Array.from(grid.querySelectorAll('.video-card'));
+  // update active button states
+  const allBtns = Array.from(document.querySelectorAll('#video-filters .filter-btn'));
+  allBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+  if (btn) { btn.classList.add('active'); btn.setAttribute('aria-pressed','true'); } else if (allBtns[0]) { allBtns[0].classList.add('active'); allBtns[0].setAttribute('aria-pressed','true'); }
+
+  cards.forEach(card => {
+    const cat = (card.dataset.category || '').trim();
+    if (!category || category === null) {
+      card.style.display = '';
+    } else {
+      card.style.display = (cat === category) ? '' : 'none';
+    }
+  });
+}
+
+// initialize filters on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  buildCategoryFilters();
+});
+
 // Modal handling
 const closeButtons = document.querySelectorAll('[data-close]');
 let currentVideo = null;
