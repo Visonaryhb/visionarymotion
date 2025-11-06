@@ -130,6 +130,18 @@ h1, h2, h3, h4 {
   text-decoration: underline;
 }
 
+.contact-trigger svg {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  fill: currentColor;
+}
+
+.contact-trigger span {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 /* make it visually match the nav links on small screens */
 @media (max-width: 768px) {
   .contact-trigger {
