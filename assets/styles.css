@@ -616,6 +616,7 @@ h1, h2, h3, h4 {
   max-height: 90vh;
   min-width: 320px;
   min-height: 180px;
+  overflow: visible; /* allow close button to sit outside without being clipped */
 }
 
 .modal-loader {
@@ -649,14 +650,40 @@ h1, h2, h3, h4 {
 
 .modal-close {
   position: absolute;
-  top: -2.5rem;
-  right: 0;
-  background: none;
+  top: 0.5rem; /* place inside the modal content so it's always reachable */
+  right: 0.5rem;
+  background: rgba(0,0,0,0.6);
   border: none;
   color: white;
-  font-size: 2rem;
+  font-size: 1.6rem;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  z-index: 1002; /* ensure it's above iframe and overlays */
+}
+
+.modal-close:focus {
+  outline: 2px solid #fff;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.45);
+}
+
+/* Skip-to-content link - visible on focus */
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.5rem;
+  background: #000;
+  color: #fff;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  transform: translateY(-120%);
+  transition: transform 0.15s ease-in-out;
+  z-index: 2000;
+  font-size: 0.95rem;
+}
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 2px solid #fff;
 }
 
 .modal-frame {

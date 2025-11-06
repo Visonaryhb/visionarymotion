@@ -120,6 +120,59 @@ document.addEventListener('DOMContentLoaded', () => generateThumbnails());
 // Modal handling
 const closeButtons = document.querySelectorAll('[data-close]');
 let currentVideo = null;
+let lastFocusedElement = null;
+let _trapKeyHandler = null;
+
+function _getFocusableElements(container) {
+  return Array.from(container.querySelectorAll('a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])'))
+    .filter(el => el.offsetWidth > 0 || el.offsetHeight > 0 || el.getClientRects().length);
+}
+
+function enableModalFocusTrap() {
+  try {
+    lastFocusedElement = document.activeElement;
+    const closeBtn = modal.querySelector('#modal-close-btn') || modal.querySelector('.modal-close');
+    if (closeBtn) closeBtn.focus();
+
+    _trapKeyHandler = function (e) {
+      if (e.key !== 'Tab') return;
+      const focusable = _getFocusableElements(modal);
+      if (focusable.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          last.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === last) {
+          first.focus();
+          e.preventDefault();
+        }
+      }
+    };
+    document.addEventListener('keydown', _trapKeyHandler);
+  } catch (e) {
+    // ignore
+  }
+}
+
+function disableModalFocusTrap() {
+  try {
+    if (_trapKeyHandler) document.removeEventListener('keydown', _trapKeyHandler);
+    _trapKeyHandler = null;
+    if (lastFocusedElement && lastFocusedElement.focus) {
+      lastFocusedElement.focus();
+    }
+    lastFocusedElement = null;
+  } catch (e) {
+    // ignore
+  }
+}
 
 // Create an HTML5 video element and return it (ready to insert)
 async function createHtml5Video(videoSrc) {
@@ -215,6 +268,8 @@ videoCards.forEach(card => {
       modalFrame.innerHTML = '';
       modalFrame.appendChild(player);
       modal.classList.remove('is-loading');
+  // enable keyboard focus trapping when modal is active
+  try { enableModalFocusTrap(); } catch (e) { /* ignore */ }
       // Try autoplay if HTML5 video (iframes won't autoplay reliably)
       if (player.tagName === 'VIDEO') {
         try {
@@ -245,6 +300,8 @@ function closeModal() {
   modal.classList.remove('is-active');
   modal.classList.remove('is-loading');
   modalFrame.innerHTML = '';
+  // disable focus trap and restore last focus
+  try { disableModalFocusTrap(); } catch (e) { /* ignore */ }
 }
 
 // Close modal on button click

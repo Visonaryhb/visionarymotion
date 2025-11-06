@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="assets/styles.css?v=3">
 </head>
 <body>
+  <a class="skip-link" href="#hero">Zum Inhalt springen</a>
   <header class="site-header">
     <div class="container header-inner">
       <div class="brand">
@@ -261,7 +262,7 @@
   <div id="video-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Video Player">
     <div class="modal-backdrop" data-close></div>
     <div class="modal-content" role="document">
-      <button class="modal-close" aria-label="Schließen" data-close>&times;</button>
+  <button id="modal-close-btn" class="modal-close" aria-label="Schließen" data-close>&times;</button>
       <div class="modal-frame" id="modal-frame" aria-live="polite">
         <!-- video oder iframe wird per JS eingefügt -->
       </div>
