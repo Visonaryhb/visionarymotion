@@ -1,0 +1,28 @@
+127.0.0.1 - - [06/Nov/2025 08:36:52] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:36:52] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:38:21] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:38:21] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:39:27] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 08:39:27] "GET /assets/Logo-removebg-preview.png HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 08:39:27] "GET /assets/styles.css?v=2 HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 08:39:27] "GET /assets/script.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 08:39:27] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:39:27] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:39:27] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:39:27] "GET /assets/photo4.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:39:27] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:39:27] "GET /assets/photo1.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:39:27] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:39:27] "GET /assets/photo2.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:39:27] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:39:27] "GET /assets/photo3.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:40:22] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 08:40:22] "GET /assets/styles.css?v=2 HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 08:40:22] "GET /assets/Logo-removebg-preview.png HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 08:40:22] "GET /assets/script.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 08:40:22] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:40:22] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:41:12] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 08:41:12] "GET /assets/styles.css?v=3 HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 08:41:12] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:41:12] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
