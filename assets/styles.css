@@ -105,12 +105,12 @@ h1, h2, h3, h4 {
 }
 
 .contact-trigger {
-  background: none;
-  border: 1px solid transparent;
-  color: var(--color-text);
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  color: white;
   font-weight: 700;
   cursor: pointer;
-  padding: 0.55rem 1.1rem; /* larger touch/click area */
+  padding: 0.6rem 1.2rem; /* larger touch/click area */
   margin: 0;
   display: inline-flex;
   align-items: center;
@@ -118,29 +118,29 @@ h1, h2, h3, h4 {
   height: 100%;
   line-height: 1;
   text-decoration: none;
-  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
-  border-radius: 10px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  border-radius: 999px; /* pill */
   font-size: 1rem;
 }
 
 .contact-trigger:hover {
-  color: var(--color-primary);
-  background: rgba(0,0,0,0.04);
-  border-color: rgba(0,0,0,0.08);
+  background: color-mix(in srgb, var(--color-primary) 80%, black 20%);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
   transform: translateY(-1px);
 }
 
 .contact-trigger:focus {
   outline: none;
   text-decoration: none;
-  box-shadow: 0 0 0 3px rgba(196,148,94,0.12);
+  box-shadow: 0 0 0 4px rgba(196,148,94,0.18);
+  transform: translateY(-1px);
 }
 
 .contact-trigger svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   display: inline-block;
-  fill: currentColor;
+  fill: white;
 }
 
 .contact-trigger span {
