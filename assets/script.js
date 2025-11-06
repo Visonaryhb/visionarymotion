@@ -43,6 +43,26 @@ async function generateThumbnails() {
     // Add loading state
     thumbEl.classList.add('loading');
 
+    // If a data-thumb attribute is present, use it immediately (local or remote image)
+    const explicitThumb = (card.dataset && card.dataset.thumb) ? card.dataset.thumb.trim() : null;
+    if (explicitThumb) {
+      // prefer the provided thumbnail and skip generation
+      try {
+        thumbEl.style.backgroundImage = `url('${explicitThumb}')`;
+      } catch (e) {
+        // ignore invalid URLs
+      }
+      thumbEl.classList.remove('loading');
+      // ensure play icon exists
+      if (!card.querySelector('.play-icon')) {
+        const play = document.createElement('div');
+        play.className = 'play-icon';
+        play.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>';
+        thumbEl.appendChild(play);
+      }
+      return;
+    }
+
     // insert play icon
     if (!card.querySelector('.play-icon')) {
       const play = document.createElement('div');
