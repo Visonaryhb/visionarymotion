@@ -700,6 +700,37 @@ h1, h2, h3, h4 {
   margin-left: 4px;
 }
 
+/* Player status and unmute button styles */
+.modal-player-status {
+  font-size: 0.9rem;
+}
+
+.modal-unmute-button {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1001;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-unmute-button:hover {
+  background: rgba(0,0,0,0.9);
+}
+
+.modal-fallback {
+  margin-top: 1rem;
+}
+
+.modal-fallback a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
