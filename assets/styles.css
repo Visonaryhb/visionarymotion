@@ -616,6 +616,7 @@ h1, h2, h3, h4 {
   max-height: 90vh;
   min-width: 320px;
   min-height: 180px;
+  overflow: visible; /* allow close button to sit outside without being clipped */
 }
 
 .modal-loader {
@@ -649,14 +650,16 @@ h1, h2, h3, h4 {
 
 .modal-close {
   position: absolute;
-  top: -2.5rem;
-  right: 0;
-  background: none;
+  top: 0.5rem; /* place inside the modal content so it's always reachable */
+  right: 0.5rem;
+  background: rgba(0,0,0,0.6);
   border: none;
   color: white;
-  font-size: 2rem;
+  font-size: 1.6rem;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  z-index: 1002; /* ensure it's above iframe and overlays */
 }
 
 .modal-frame {
