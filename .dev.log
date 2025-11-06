@@ -26,3 +26,11 @@
 127.0.0.1 - - [06/Nov/2025 08:41:12] "GET /assets/styles.css?v=3 HTTP/1.1" 200 -
 127.0.0.1 - - [06/Nov/2025 08:41:12] code 404, message File not found
 127.0.0.1 - - [06/Nov/2025 08:41:12] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:46:36] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:46:36] "GET /assets/photo4.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:46:36] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:46:36] "GET /assets/photo1.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:46:36] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:46:36] "GET /assets/photo2.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 08:46:36] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 08:46:36] "GET /assets/photo3.jpg HTTP/1.1" 404 -
