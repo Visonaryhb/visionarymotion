@@ -34,3 +34,94 @@
 127.0.0.1 - - [06/Nov/2025 08:46:36] "GET /assets/photo2.jpg HTTP/1.1" 404 -
 127.0.0.1 - - [06/Nov/2025 08:46:36] code 404, message File not found
 127.0.0.1 - - [06/Nov/2025 08:46:36] "GET /assets/photo3.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 09:51:34] "HEAD / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 09:52:39] "HEAD / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 09:53:28] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 09:53:28] "GET /assets/styles.css?v=3 HTTP/1.1" 304 -
+127.0.0.1 - - [06/Nov/2025 09:53:28] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 09:53:28] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 09:53:28] "GET /assets/Logo-removebg-preview.png HTTP/1.1" 304 -
+127.0.0.1 - - [06/Nov/2025 09:53:28] "GET /assets/script.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 09:53:30] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 09:53:30] "GET /assets/photo1.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 09:53:30] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 09:53:30] "GET /assets/photo3.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 09:53:30] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 09:53:30] "GET /assets/photo2.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 09:53:30] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 09:53:30] "GET /assets/photo4.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 09:53:48] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 09:53:48] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 09:53:48] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 09:53:48] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 09:53:48] "GET /assets/photo4.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 09:53:48] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 09:53:48] "GET /assets/photo1.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 09:53:48] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 09:53:48] "GET /assets/photo2.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 09:53:48] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 09:53:48] "GET /assets/photo3.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:00:32] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 10:00:32] "GET /assets/script.js HTTP/1.1" 304 -
+127.0.0.1 - - [06/Nov/2025 10:00:32] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:00:32] "GET /assets/photo1.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:00:32] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:00:32] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:00:32] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:00:32] "GET /assets/photo4.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:00:32] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:00:32] "GET /assets/photo3.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:00:32] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:00:32] "GET /assets/photo2.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:20] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 10:29:20] "GET /assets/script.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 10:29:20] "GET /assets/styles.css?v=3 HTTP/1.1" 304 -
+127.0.0.1 - - [06/Nov/2025 10:29:20] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:20] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:22] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:22] "GET /assets/photo1.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:22] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:22] "GET /assets/photo3.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:22] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:22] "GET /assets/photo2.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:22] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:22] "GET /assets/photo4.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:28] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 10:29:28] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:28] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:28] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:28] "GET /assets/photo2.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:28] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:28] "GET /assets/photo1.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:28] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:28] "GET /assets/photo3.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:28] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:28] "GET /assets/photo4.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:31] "GET / HTTP/1.1" 304 -
+127.0.0.1 - - [06/Nov/2025 10:29:31] "GET /assets/script.js HTTP/1.1" 304 -
+127.0.0.1 - - [06/Nov/2025 10:29:31] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:31] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:32] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:32] "GET /assets/photo1.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:32] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:32] "GET /assets/photo3.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:32] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:32] "GET /assets/photo2.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:29:32] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:29:32] "GET /assets/photo4.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:34:11] "HEAD / HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 10:58:37] "GET / HTTP/1.1" 304 -
+127.0.0.1 - - [06/Nov/2025 10:58:37] "GET /assets/styles.css?v=3 HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 10:58:37] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:58:37] "GET /assets/team-photo.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:58:37] "GET /assets/script.js HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 10:58:37] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:58:37] "GET /assets/photo4.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:58:37] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:58:37] "GET /assets/photo2.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:58:37] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:58:37] "GET /assets/photo3.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:58:37] code 404, message File not found
+127.0.0.1 - - [06/Nov/2025 10:58:37] "GET /assets/photo1.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [06/Nov/2025 10:59:45] "GET /assets/styles.css?v=3 HTTP/1.1" 200 -
+127.0.0.1 - - [06/Nov/2025 10:59:45] "GET /assets/script.js HTTP/1.1" 200 -

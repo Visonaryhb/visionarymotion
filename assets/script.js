@@ -170,8 +170,37 @@ function createYouTubeIframe(ytId) {
   iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
   iframe.allowFullscreen = true;
   // include playsinline and enablejsapi to allow programmatic control; autoplay muted to maximize cross-browser start
-  // we include origin to satisfy YouTube API requirements
-  const params = new URLSearchParams({ rel: '0', showinfo: '0', modestbranding: '1', playsinline: '1', enablejsapi: '1', origin: window.location.origin, autoplay: '1', mute: '1' });
+  // we include an origin param to satisfy YouTube API requirements. In some proxied/dev environments the visible
+  // window.location.origin may differ from the referrer/forwarded host that YouTube sees; try to pick the most
+  // appropriate origin so YouTube initializes the iframe API correctly.
+  let originCandidate = window.location.origin;
+  try {
+    if (document && document.referrer) {
+      const refOrigin = new URL(document.referrer).origin;
+      // prefer the referrer origin when it differs from location.origin (covers some Codespaces/preview proxies)
+      if (refOrigin && refOrigin !== originCandidate) originCandidate = refOrigin;
+    }
+  } catch (e) {
+    // ignore malformed referrer
+  }
+  // If we're running inside a preview/forwarding host (codespaces / github.dev / app.github.dev), these
+  // origins are often rewritten by the preview proxy and using them as the iframe 'origin' can break
+  // the YouTube embedded player API. Detect common preview hosts and omit the origin param in that case.
+  try {
+    const previewHosts = ['github.dev', 'app.github.dev', 'githubpreview.dev', 'preview.app.github.dev'];
+    for (const ph of previewHosts) {
+      if (originCandidate && originCandidate.indexOf(ph) !== -1) {
+        originCandidate = '';
+        break;
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+  const params = new URLSearchParams({ rel: '0', showinfo: '0', modestbranding: '1', playsinline: '1', enablejsapi: '1', autoplay: '1', mute: '1' });
+  if (originCandidate) params.set('origin', originCandidate);
+  // keep the chosen origin on the iframe for debugging
+  iframe.dataset.embedOrigin = originCandidate;
   // set an id so we can postMessage commands to this iframe
   iframe.id = `yt-player-${Math.random().toString(36).slice(2,9)}`;
   iframe.src = `https://www.youtube.com/embed/${ytId}?${params.toString()}`;
@@ -270,27 +299,118 @@ videoCards.forEach(card => {
         // set tracking attrs
         modalFrame.dataset.ytReady = 'pending';
         // on iframe load, set a timeout to check for API readiness
+        // give the embed more time on slow networks and allow YouTube a chance to initialize
         const checkTimeout = setTimeout(() => {
           if (modalFrame.dataset.ytReady !== 'ready' && modalFrame.dataset.ytReady !== 'info') {
             modalFrame.dataset.ytReady = 'failed';
-            status.innerText = 'Player: nicht bereit (Embedding blockiert?)';
-            status.style.background = 'rgba(160,40,40,0.9)';
+            console.warn('YouTube embed did not signal ready; attempting a privacy-friendly retry then showing fallback.');
+            status.innerText = 'Player: nicht bereit (Versuch: privacy-mode...)';
+            status.style.background = 'rgba(200,120,0,0.9)';
+
+            // Try swapping to the privacy-enhanced youtube-nocookie domain once (some blockers behave differently)
+            try {
+              const src = player && player.src ? player.src : modalFrame.getAttribute('data-player-src') || '';
+              const ytMatch = src.match(/embed\/([a-zA-Z0-9_-]{8,})/);
+              const ytIdForFallback = ytMatch ? ytMatch[1] : null;
+              if (ytIdForFallback) {
+                console.info('Retrying embed with youtube-nocookie.com for video', ytIdForFallback);
+                    // swap src to youtube-nocookie and give it extra time
+                    player.src = src.replace('www.youtube.com/embed/', 'www.youtube-nocookie.com/embed/');
+                    modalFrame.setAttribute('data-player-src', player.src);
+                    modalFrame.dataset.retryStage = 'nocookie';
+                    // one more grace period; if this fails we try removing the origin param entirely
+                    setTimeout(() => {
+                      if (modalFrame.dataset.ytReady !== 'ready' && modalFrame.dataset.ytReady !== 'info') {
+                        // try removing origin parameter as a last-resort retry (some proxies/forwards rewrite origin)
+                        try {
+                          const current = player && player.src ? player.src : modalFrame.getAttribute('data-player-src') || '';
+                          const urlObj = new URL(current);
+                          if (urlObj.searchParams.has('origin')) {
+                            urlObj.searchParams.delete('origin');
+                            player.src = urlObj.toString();
+                            modalFrame.setAttribute('data-player-src', player.src);
+                            modalFrame.dataset.retryStage = 'no-origin';
+                            console.info('Retrying embed with origin param removed for video', ytIdForFallback);
+                            // give it a short extra grace period
+                            setTimeout(() => {
+                              if (modalFrame.dataset.ytReady !== 'ready' && modalFrame.dataset.ytReady !== 'info') {
+                                modalFrame.dataset.ytReady = 'failed';
+                                status.innerText = 'Player: nicht bereit (Embedding blockiert?)';
+                                status.style.background = 'rgba(160,40,40,0.9)';
+                                const existing = modalFrame.querySelector('.modal-fallback');
+                                if (!existing) {
+                                  const fallback = document.createElement('div');
+                                  fallback.className = 'modal-fallback';
+                                  fallback.style.marginTop = '1rem';
+                                  fallback.innerHTML = `<p style="color:#fff;">Einbetten scheint blockiert. <a href="https://www.youtube.com/watch?v=${ytIdForFallback}" target="_blank" rel="noopener" style="color:#fff; text-decoration:underline;">Auf YouTube ansehen</a></p><p style="color:#fff; font-size:0.9rem; margin-top:0.5rem;">Hinweis: Prüfe in YouTube Studio → Video → "Einbetten erlauben" und die Sichtbarkeit (nicht privat).</p>`;
+                                  modalFrame.appendChild(fallback);
+                                }
+                              }
+                            }, 5000);
+                            return;
+                          }
+                        } catch (e) {
+                          console.warn('Removing origin retry failed', e);
+                        }
+                        // if we couldn't retry, show fallback now
+                        modalFrame.dataset.ytReady = 'failed';
+                        status.innerText = 'Player: nicht bereit (Embedding blockiert?)';
+                        status.style.background = 'rgba(160,40,40,0.9)';
+                        const existing = modalFrame.querySelector('.modal-fallback');
+                        if (!existing) {
+                          // Try a last-resort simple iframe (no enablejsapi, no origin) which may work when the
+                          // JS API handshake is blocked by proxies or extensions. This sacrifices programmatic
+                          // control (unmute/stop via postMessage) but may allow inline playback.
+                          try {
+                            if (ytIdForFallback) {
+                              const simpleIframe = document.createElement('iframe');
+                              simpleIframe.width = '100%';
+                              simpleIframe.height = '100%';
+                              simpleIframe.style.border = '0';
+                              simpleIframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                              simpleIframe.allowFullscreen = true;
+                              // build simple src without enablejsapi/origin
+                              simpleIframe.src = `https://www.youtube-nocookie.com/embed/${ytIdForFallback}?rel=0&modestbranding=1&playsinline=1&autoplay=1&mute=1`;
+                              simpleIframe.dataset.simpleFallback = 'true';
+                              modalFrame.appendChild(simpleIframe);
+                              modalFrame.setAttribute('data-player-src', simpleIframe.src);
+                              modalFrame.setAttribute('data-player-type', 'iframe-simple');
+                              modalFrame.dataset.fallback = 'simple-iframe';
+                              // show fallback note beneath
+                              const fallback = document.createElement('div');
+                              fallback.className = 'modal-fallback';
+                              fallback.style.marginTop = '0.5rem';
+                              fallback.innerHTML = `<p style="color:#fff;">Automatischer Fallback: vereinfachtes Einbetten (kein Player-API). Wenn Ton benötigt wird, klicke "Auf YouTube ansehen".</p><p style="color:#fff; font-size:0.9rem; margin-top:0.25rem;"><a href="https://www.youtube.com/watch?v=${ytIdForFallback}" target="_blank" rel="noopener" style="color:#fff; text-decoration:underline;">Auf YouTube ansehen</a></p>`;
+                              modalFrame.appendChild(fallback);
+                            }
+                          } catch (e) {
+                            const fallback = document.createElement('div');
+                            fallback.className = 'modal-fallback';
+                            fallback.style.marginTop = '1rem';
+                            fallback.innerHTML = `<p style="color:#fff;">Einbetten scheint blockiert. <a href="https://www.youtube.com/watch?v=${ytIdForFallback}" target="_blank" rel="noopener" style="color:#fff; text-decoration:underline;">Auf YouTube ansehen</a></p><p style="color:#fff; font-size:0.9rem; margin-top:0.5rem;">Hinweis: Prüfe in YouTube Studio → Video → "Einbetten erlauben" und die Sichtbarkeit (nicht privat).</p>`;
+                            modalFrame.appendChild(fallback);
+                          }
+                        }
+                      }
+                    }, 7000);
+                return;
+              }
+            } catch (e) {
+              console.warn('Retry with nocookie failed', e);
+            }
+
             // add a fallback link to open the video directly on YouTube
             try {
               const existing = modalFrame.querySelector('.modal-fallback');
               if (!existing) {
-                const ytIdForFallback = (function() {
-                  try {
-                    const src = player && player.src ? player.src : modalFrame.getAttribute('data-player-src') || '';
-                    const m = src.match(/embed\/([a-zA-Z0-9_-]{8,})/);
-                    return m ? m[1] : null;
-                  } catch (e) { return null; }
-                })();
+                const src = player && player.src ? player.src : modalFrame.getAttribute('data-player-src') || '';
+                const m = src.match(/embed\/([a-zA-Z0-9_-]{8,})/);
+                const ytIdForFallback = m ? m[1] : null;
                 const fallback = document.createElement('div');
                 fallback.className = 'modal-fallback';
                 fallback.style.marginTop = '1rem';
                 if (ytIdForFallback) {
-                  fallback.innerHTML = `<p style="color:#fff;">Einbetten scheint blockiert. <a href="https://www.youtube.com/watch?v=${ytIdForFallback}" target="_blank" rel="noopener" style="color:#fff; text-decoration:underline;">Auf YouTube ansehen</a></p>`;
+                  fallback.innerHTML = `<p style="color:#fff;">Einbetten scheint blockiert. <a href="https://www.youtube.com/watch?v=${ytIdForFallback}" target="_blank" rel="noopener" style="color:#fff; text-decoration:underline;">Auf YouTube ansehen</a></p><p style="color:#fff; font-size:0.9rem; margin-top:0.5rem;">Hinweis: Prüfe in YouTube Studio → Video → "Einbetten erlauben" und die Sichtbarkeit (nicht privat).</p>`;
                 } else {
                   fallback.innerHTML = `<p style="color:#fff;">Einbetten scheint blockiert. <a href="https://www.youtube.com/" target="_blank" rel="noopener" style="color:#fff; text-decoration:underline;">Auf YouTube ansehen</a></p>`;
                 }
@@ -300,7 +420,7 @@ videoCards.forEach(card => {
               // ignore
             }
           }
-        }, 9000);
+        }, 15000);
         // small polling to update status if messages arrive
         const poll = setInterval(() => {
           if (modalFrame.dataset.ytReady === 'ready' || modalFrame.dataset.ytReady === 'info') {
@@ -341,6 +461,79 @@ videoCards.forEach(card => {
         // position parent (modal-frame) relative so button positions correctly
         modalFrame.style.position = 'relative';
         modalFrame.appendChild(unmuteBtn);
+
+        // Debug button: collect useful diagnostics and copy to clipboard
+        const debugBtn = document.createElement('button');
+        debugBtn.className = 'modal-debug-button';
+        debugBtn.innerText = 'Debug-Info kopieren';
+        debugBtn.style.position = 'absolute';
+        debugBtn.style.right = '1rem';
+        debugBtn.style.top = '1rem';
+        debugBtn.style.zIndex = '1001';
+        debugBtn.style.padding = '0.35rem 0.5rem';
+        debugBtn.style.background = 'rgba(0,0,0,0.6)';
+        debugBtn.style.color = '#fff';
+        debugBtn.style.border = 'none';
+        debugBtn.style.borderRadius = '6px';
+        debugBtn.style.fontSize = '0.85rem';
+        debugBtn.addEventListener('click', async () => {
+          try {
+            const info = {
+              timestamp: new Date().toISOString(),
+              pageOrigin: window.location.origin,
+              pageHref: window.location.href,
+              userAgent: navigator.userAgent,
+              playerSrc: player && (player.src || (player.currentSrc || null)) || modalFrame.getAttribute('data-player-src') || null,
+              playerType: modalFrame.getAttribute('data-player-type') || null,
+              ytReady: modalFrame.getAttribute('data-yt-ready') || null,
+              lastMessage: modalFrame.getAttribute('data-last-message') || null,
+              documentReferrer: document.referrer || null
+            };
+
+            // Try a lightweight fetch to the embed URL to detect network-level blocks (best-effort):
+            if (info.playerSrc && info.playerSrc.indexOf('youtube') !== -1) {
+              try {
+                // Use mode 'no-cors' so this won't be blocked by CORS, but note result will be opaque in many browsers
+                const f = await fetch(info.playerSrc, { mode: 'no-cors' });
+                info.embedFetch = { ok: f && (f.type || 'opaque'), status: f && f.status };
+              } catch (fe) {
+                info.embedFetch = { error: String(fe) };
+              }
+            }
+
+            const blob = JSON.stringify(info, null, 2);
+            // show the debug data in a small overlay element
+            let overlay = modalFrame.querySelector('.modal-debug-output');
+            if (!overlay) {
+              overlay = document.createElement('pre');
+              overlay.className = 'modal-debug-output';
+              overlay.style.position = 'absolute';
+              overlay.style.left = '1rem';
+              overlay.style.bottom = '3.5rem';
+              overlay.style.zIndex = '1001';
+              overlay.style.maxHeight = '40%';
+              overlay.style.overflow = 'auto';
+              overlay.style.background = 'rgba(0,0,0,0.75)';
+              overlay.style.color = '#fff';
+              overlay.style.padding = '0.5rem';
+              overlay.style.fontSize = '0.75rem';
+              overlay.style.borderRadius = '6px';
+              overlay.style.whiteSpace = 'pre-wrap';
+              modalFrame.appendChild(overlay);
+            }
+            overlay.innerText = blob;
+
+            // Copy to clipboard if available
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              try { await navigator.clipboard.writeText(blob); status.innerText = 'Debug: kopiert'; } catch (ce) { status.innerText = 'Debug: kopieren fehlgeschlagen'; }
+            } else {
+              status.innerText = 'Debug: kopieren nicht unterstützt';
+            }
+          } catch (err) {
+            console.warn('Collect debug failed', err);
+          }
+        });
+        modalFrame.appendChild(debugBtn);
       }
       modal.classList.remove('is-loading');
       // Try autoplay if HTML5 video (iframes won't autoplay reliably)
