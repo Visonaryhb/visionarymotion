@@ -492,6 +492,20 @@ h1, h2, h3, h4 {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Preview layer covers the thumb when playing (muted preview) */
+.video-thumb .preview-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0; /* keep under gradient overlays */
+  pointer-events: none; /* don't block card clicks */
+  background: transparent;
+}
+
+.video-card .play-icon { z-index: 5; }
+
 /* Wenn Kategorien als Badges angezeigt werden, sind die alten Unterschriften überflüssig. */
 .video-info {
   display: none !important;

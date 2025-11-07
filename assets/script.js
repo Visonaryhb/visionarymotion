@@ -358,6 +358,25 @@ videoCards.forEach(card => {
       v.src = card.dataset.video;
       v.preload = 'auto';
     }
+    // start hover preview after a short delay
+    if (card._previewTimeout) clearTimeout(card._previewTimeout);
+    card._previewTimeout = setTimeout(() => startPreview(card), 220);
+  });
+
+  card.addEventListener('mouseleave', () => {
+    if (card._previewTimeout) { clearTimeout(card._previewTimeout); card._previewTimeout = null; }
+    stopPreview(card);
+  });
+
+  card.addEventListener('focusin', () => {
+    // keyboard focus also triggers a preview
+    if (card._previewTimeout) clearTimeout(card._previewTimeout);
+    card._previewTimeout = setTimeout(() => startPreview(card), 220);
+  });
+
+  card.addEventListener('focusout', () => {
+    if (card._previewTimeout) { clearTimeout(card._previewTimeout); card._previewTimeout = null; }
+    stopPreview(card);
   });
 
   card.addEventListener('click', async () => {
@@ -400,6 +419,65 @@ videoCards.forEach(card => {
     
   });
 });
+
+// Hover preview helpers
+function startPreview(card) {
+  try {
+    if (!card || card._previewActive) return;
+    const videoSrc = card.dataset.video;
+    const thumbEl = card.querySelector('.video-thumb');
+    if (!videoSrc || !thumbEl) return;
+
+    const ytId = extractYouTubeID(videoSrc);
+    if (ytId) {
+      const iframe = document.createElement('iframe');
+      iframe.className = 'preview-layer';
+      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+      iframe.setAttribute('frameborder', '0');
+      // autoplay muted loop via playlist param
+      iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&playsinline=1&loop=1&playlist=${ytId}`;
+      thumbEl.appendChild(iframe);
+      card._previewEl = iframe;
+      card._previewActive = true;
+      return;
+    }
+
+    // local MP4 preview
+    const v = document.createElement('video');
+    v.className = 'preview-layer';
+    v.src = videoSrc;
+    v.muted = true;
+    v.loop = true;
+    v.autoplay = true;
+    v.playsInline = true;
+    v.preload = 'auto';
+    v.style.width = '100%';
+    v.style.height = '100%';
+    v.style.objectFit = 'cover';
+    thumbEl.appendChild(v);
+    // attempt to play (may be blocked if not muted, but we set muted)
+    v.play().catch(() => {});
+    card._previewEl = v;
+    card._previewActive = true;
+  } catch (e) {
+    // fail quietly
+  }
+}
+
+function stopPreview(card) {
+  try {
+    if (!card) return;
+    const el = card._previewEl;
+    if (!el) return;
+    // pause video if it's a video element
+    try { if (el.tagName && el.tagName.toLowerCase() === 'video') el.pause(); } catch (e) {}
+    if (el.remove) el.remove();
+    card._previewEl = null;
+    card._previewActive = false;
+  } catch (e) {
+    // ignore
+  }
+}
 
 function closeModal() {
   if (currentVideo) {
