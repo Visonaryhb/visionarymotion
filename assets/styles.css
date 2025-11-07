@@ -1146,6 +1146,26 @@ h1, h2, h3, h4 {
   }
 }
 
+/* Override for desktop: stack brand name and slogan vertically */
+@media (min-width: 1024px) {
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  .brand-text .name {
+    display: block;
+    font-size: 1.6rem; /* keep prominence */
+  }
+  .brand-text .brand-slogan {
+    display: block;
+    margin-top: 0.125rem;
+    font-size: 1rem;
+    color: var(--color-text);
+  }
+}
+
 /* Entrance animation for video cards */
 .video-card {
   opacity: 0;
