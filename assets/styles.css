@@ -986,6 +986,54 @@ h1, h2, h3, h4 {
   }
 }
 
+/* Fixes for header / contact / services / social on small screens */
+@media (max-width: 768px) {
+  /* slightly smaller header padding so top areas aren't pushed off */
+  .site-header {
+    padding: 0.6rem 0;
+  }
+
+  /* make contact button visible and prominent on mobile */
+  .contact-trigger {
+    background: var(--color-primary);
+    color: #fff;
+    border: 1px solid var(--color-primary);
+    padding: 0.5rem 0.9rem;
+    font-size: 0.95rem;
+  }
+
+  /* reduce logo on small screens to avoid overlapping hero */
+  .logo { height: 90px; }
+
+  /* make sure hero doesn't get visually hidden by header */
+  .hero { padding-top: 1.5rem; }
+
+  /* ensure services text isn't clipped and wraps naturally */
+  .services .service { overflow: visible; }
+  .services p, .service p { white-space: normal; word-break: break-word; }
+
+  /* social / instagram row should wrap and be visible */
+  .social-row { flex-wrap: wrap; justify-content: center; }
+}
+
+@media (max-width: 480px) {
+  /* even smaller logo */
+  .logo { height: 72px; }
+
+  /* touch-friendly video interaction: provide active feedback */
+  .video-card:active .video-thumb {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.16);
+  }
+
+  .video-card:active .video-thumb::before {
+    opacity: 0.08;
+  }
+
+  /* increase spacing for service cards so text doesn't look cramped */
+  .services-grid { gap: 1.5rem; }
+}
+
 /* Extra tweak: ensure very large screens get the larger logo size explicitly */
 @media (min-width: 1200px) {
   .logo {
