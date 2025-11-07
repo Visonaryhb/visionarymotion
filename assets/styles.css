@@ -1164,6 +1164,8 @@ h1, h2, h3, h4 {
     margin-top: 0;
     font-size: clamp(1rem, 1.6vw, 1.1rem);
     color: var(--color-text);
+    white-space: nowrap; /* keep slogan on a single line */
+    hyphens: none;
   }
 }
 
