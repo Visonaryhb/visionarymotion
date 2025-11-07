@@ -535,3 +535,48 @@ modal.addEventListener('click', e => {
     closeModal();
   }
 });
+
+// --- Mobile nav toggle (hamburger) ---
+function setupMobileNav() {
+  try {
+    const toggle = document.querySelector('.nav-toggle');
+    const nav = document.getElementById('main-nav');
+    if (!toggle || !nav) return;
+
+    const closeNav = () => {
+      nav.classList.remove('is-open');
+      toggle.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Menü öffnen');
+    };
+
+    const openNav = () => {
+      nav.classList.add('is-open');
+      toggle.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Menü schließen');
+      const first = nav.querySelector('a, button');
+      if (first) first.focus();
+    };
+
+    toggle.addEventListener('click', (e) => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      if (expanded) closeNav(); else openNav();
+    });
+
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape') closeNav();
+    });
+
+    document.addEventListener('click', (ev) => {
+      if (!nav.classList.contains('is-open')) return;
+      if (nav.contains(ev.target) || toggle.contains(ev.target)) return;
+      closeNav();
+    });
+  } catch (e) {
+    // noop
+  }
+}
+
+// Initialize mobile nav on DOM ready
+document.addEventListener('DOMContentLoaded', setupMobileNav);
