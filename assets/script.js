@@ -36,17 +36,18 @@ function extractYouTubeID(url) {
 
 // Generate thumbnail images from videos when no poster provided
 async function generateThumbnails() {
-  videoCards.forEach(card => {
+  videoCards.forEach((card, index) => {
     const thumbEl = card.querySelector('.video-thumb');
     if (!thumbEl) return;
 
     // Add loading state
     thumbEl.classList.add('loading');
 
-    // If a data-thumb attribute is present, use it immediately (local or remote image)
+    // If a data-thumb attribute is present and this is the FIRST card, use it immediately
+    // For all other cards, force generated thumbnails so they look consistent and cinematic
     const explicitThumb = (card.dataset && card.dataset.thumb) ? card.dataset.thumb.trim() : null;
-    if (explicitThumb) {
-      // prefer the provided thumbnail and skip generation
+    if (explicitThumb && index === 0) {
+      // keep provided thumbnail for the first card only
       try {
         thumbEl.style.backgroundImage = `url('${explicitThumb}')`;
       } catch (e) {
@@ -79,9 +80,35 @@ async function generateThumbnails() {
 
     const ytId = extractYouTubeID(videoSrc);
     if (ytId) {
-      // Use YouTube thumbnail
-      thumbEl.style.backgroundImage = `url('https://img.youtube.com/vi/${ytId}/hqdefault.jpg')`;
-      thumbEl.classList.remove('loading');
+      // Try to use the best possible YouTube thumbnail (maxresfallback -> hqdefault)
+      (function loadYoutubeThumb(id, el) {
+        const tryUrls = [
+          `https://img.youtube.com/vi/${id}/maxresdefault.jpg`,
+          `https://img.youtube.com/vi/${id}/hqdefault.jpg`
+        ];
+        let idx = 0;
+        function tryNext() {
+          if (idx >= tryUrls.length) {
+            el.classList.remove('loading');
+            return;
+          }
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = function () {
+            // only accept if image has reasonable size (YouTube returns a tiny placeholder sometimes)
+            if (img.naturalWidth && img.naturalWidth > 120) {
+              try { el.style.backgroundImage = `url('${tryUrls[idx]}')`; } catch (e) { /* ignore */ }
+              el.classList.remove('loading');
+            } else {
+              idx++;
+              tryNext();
+            }
+          };
+          img.onerror = function () { idx++; tryNext(); };
+          img.src = tryUrls[idx];
+        }
+        tryNext();
+      })(ytId, thumbEl);
       return;
     }
 
