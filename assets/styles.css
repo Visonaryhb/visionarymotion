@@ -954,6 +954,8 @@ h1, h2, h3, h4 {
     margin-left: 0.5rem;
     margin-right: 0.5rem;
     padding: 0.35rem;
+    z-index: 1200; /* ensure it's above other header elements and tappable */
+    pointer-events: auto;
   }
 
   .nav-toggle:focus {
@@ -1133,7 +1135,8 @@ h1, h2, h3, h4 {
 }
 
 /* Ensure brand stays horizontal on desktop (prevent accidental stacking) */
-@media (min-width: 769px) {
+@media (min-width: 640px) {
+  /* keep brand horizontal from small-desktop/tablet widths upward */
   .brand {
     flex-direction: row;
     align-items: center;
