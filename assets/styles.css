@@ -926,6 +926,64 @@ h1, h2, h3, h4 {
     /* kleinere Logo-Größe auf Mobilgeräten (zentriert durch .brand) */
     height: 110px;
   }
+
+  /* Mobile-friendly tweaks for video grid and filters */
+  .video-filters {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.6rem;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .video-grid {
+    gap: 1.25rem;
+  }
+
+  /* reduce heavy shadow/transform effects on touch devices for a cleaner look */
+  .video-thumb {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+  }
+
+  .video-card:hover .video-thumb,
+  .video-card:hover {
+    transform: none; /* remove hover lifts on mobile */
+    box-shadow: none;
+  }
+
+  .hero {
+    padding: clamp(2.5rem, 6vw, 4rem);
+  }
+}
+
+/* Extra small screens tweaks */
+@media (max-width: 480px) {
+  /* scale down the play icon for small screens and make it easier to tap */
+  .video-card .play-icon {
+    width: 56px;
+    height: 56px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.14);
+  }
+
+  .play-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* slightly smaller badge */
+  .video-card::after {
+    font-size: 11px;
+    padding: 5px 8px;
+    top: 8px;
+    left: 8px;
+  }
+
+  /* make modal comfortably fit small screens */
+  .modal-content {
+    max-width: 96vw;
+    max-height: 86vh;
+    min-width: 280px;
+  }
 }
 
 /* Extra tweak: ensure very large screens get the larger logo size explicitly */
