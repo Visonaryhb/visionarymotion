@@ -227,6 +227,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Limit previews: don't allow previews on small screens and ensure only one active preview at a time
+let _activePreviewCard = null;
+
+function _isMobileViewport() {
+  try { return window.matchMedia && window.matchMedia('(max-width: 767px)').matches; } catch (e) { return false; }
+}
+
 // Modal handling
 const closeButtons = document.querySelectorAll('[data-close]');
 let currentVideo = null;
@@ -429,7 +436,11 @@ function startPreview(card) {
     if (!videoSrc || !thumbEl) return;
 
     const ytId = extractYouTubeID(videoSrc);
+    if (_isMobileViewport()) return; // disable previews on small/touch devices
+
     if (ytId) {
+      // ensure only one preview active
+      if (_activePreviewCard && _activePreviewCard !== card) stopPreview(_activePreviewCard);
       const iframe = document.createElement('iframe');
       iframe.className = 'preview-layer';
       iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
@@ -439,6 +450,7 @@ function startPreview(card) {
       thumbEl.appendChild(iframe);
       card._previewEl = iframe;
       card._previewActive = true;
+      _activePreviewCard = card;
       return;
     }
 
@@ -454,11 +466,14 @@ function startPreview(card) {
     v.style.width = '100%';
     v.style.height = '100%';
     v.style.objectFit = 'cover';
+    // ensure only one preview active
+    if (_activePreviewCard && _activePreviewCard !== card) stopPreview(_activePreviewCard);
     thumbEl.appendChild(v);
     // attempt to play (may be blocked if not muted, but we set muted)
     v.play().catch(() => {});
     card._previewEl = v;
     card._previewActive = true;
+    _activePreviewCard = card;
   } catch (e) {
     // fail quietly
   }
