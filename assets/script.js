@@ -197,6 +197,36 @@ document.addEventListener('DOMContentLoaded', () => {
   buildCategoryFilters();
 });
 
+// Entrance animation: staggered reveal of video cards using IntersectionObserver
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const cards = Array.from(document.querySelectorAll('.video-card'));
+    if (!('IntersectionObserver' in window) || cards.length === 0) {
+      // fallback: just reveal all
+      cards.forEach(c => c.classList.add('in-view'));
+      return;
+    }
+
+    const obs = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          // compute stagger based on index among siblings
+          const idx = cards.indexOf(el);
+          const delay = Math.min(300, idx * 70); // cap delay
+          el.style.setProperty('--d', `${delay}ms`);
+          el.classList.add('in-view');
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    cards.forEach(c => obs.observe(c));
+  } catch (e) {
+    // fail silently
+  }
+});
+
 // Modal handling
 const closeButtons = document.querySelectorAll('[data-close]');
 let currentVideo = null;
