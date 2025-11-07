@@ -916,6 +916,22 @@ h1, h2, h3, h4 {
     flex-direction: column;
     text-align: center;
   }
+
+  /* Make header nav wrap and stay accessible on small screens */
+  .header-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .header-nav a,
+  .header-nav .social,
+  .header-nav .contact-trigger {
+    white-space: nowrap;
+    min-width: 0;
+  }
   
   .brand {
     flex-direction: column;
