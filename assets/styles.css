@@ -492,29 +492,6 @@ h1, h2, h3, h4 {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Cinematic enhancement: subtle color wash + vignette to make thumbnails pop */
-.video-thumb::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(196,148,94,0.06), rgba(139,92,246,0.04));
-  mix-blend-mode: soft-light;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.95;
-}
-
-.video-thumb::after {
-  /* dark gradient for legibility and cinematic feel (higher contrast toward bottom) */
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.62) 100%);
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  z-index: 2;
-}
-
 /* Wenn Kategorien als Badges angezeigt werden, sind die alten Unterschriften überflüssig. */
 .video-info {
   display: none !important;
@@ -567,15 +544,15 @@ h1, h2, h3, h4 {
 
 .video-card .play-icon {
   position: absolute;
-  width: 76px;
-  height: 76px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.98), rgba(255,255,255,0.92));
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
   display: inline-grid;
   place-items: center;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.32);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
   transform: translateY(0);
-  transition: transform 0.25s cubic-bezier(.2,.9,.3,1), opacity 0.2s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease, opacity 0.2s ease;
 }
 
 .video-card:hover .play-icon {
@@ -583,8 +560,8 @@ h1, h2, h3, h4 {
 }
 
 .play-icon svg { 
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   fill: var(--color-primary);
 }
 
