@@ -951,6 +951,17 @@ h1, h2, h3, h4 {
   transform: translateY(-4px);
 }
 
+/* extra hover polish: subtle scale and color wash on the thumb */
+.video-card:hover .video-thumb {
+  transform: scale(1.02) translateY(-6px);
+}
+.video-card .video-thumb::before {
+  transition: opacity 220ms ease;
+}
+.video-card:hover .video-thumb::before {
+  opacity: 0.08; /* slightly stronger wash on hover */
+}
+
 /* Team names styling (no photo) */
 .team-hero .team-names {
   display: inline-block;
