@@ -1132,6 +1132,17 @@ h1, h2, h3, h4 {
   }
 }
 
+/* Ensure brand stays horizontal on desktop (prevent accidental stacking) */
+@media (min-width: 769px) {
+  .brand {
+    flex-direction: row;
+    align-items: center;
+  }
+  .brand-text {
+    text-align: left;
+  }
+}
+
 /* Entrance animation for video cards */
 .video-card {
   opacity: 0;
