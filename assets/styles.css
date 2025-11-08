@@ -1118,11 +1118,17 @@ h1, h2, h3, h4 {
     height: 44px;
   }
 
+  /* Keep brand text (name + slogan) visible in compact mode — smaller/condensed but readable */
   .site-header.compact .brand-text {
-    opacity: 0;
-    transform: translateY(-4px);
-    pointer-events: none;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
     transition: opacity 0.22s ease, transform 0.22s ease;
+  }
+
+  .site-header.compact .brand-slogan {
+    font-size: 0.85rem;
+    opacity: 0.9;
   }
 
   /* Make nav links smaller in compact mode */
