@@ -437,6 +437,12 @@ modal.addEventListener('click', e => {
     if (y <= 20) {
       header.classList.remove('is-hidden');
       header.classList.add('is-shown');
+      // ensure main padding reserved when header is visible
+      try {
+        const h = header.getBoundingClientRect().height;
+        document.documentElement.style.setProperty('--header-height', h + 'px');
+        if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
+      } catch (e) {}
       lastY = y;
       ticking = false;
       return;
@@ -445,13 +451,22 @@ modal.addEventListener('click', e => {
     const delta = y - lastY;
     if (Math.abs(delta) > THRESHOLD) {
       if (delta > 0 && y > MIN_SCROLL_TO_HIDE) {
-        // scrolling down
+        // scrolling down -> hide header and remove reserved padding so content fills screen
         header.classList.add('is-hidden');
         header.classList.remove('is-shown');
+        try {
+          document.documentElement.style.setProperty('--header-height', '0px');
+          if (isMobile()) document.querySelector('main').style.paddingTop = '0px';
+        } catch (e) {}
       } else {
-        // scrolling up
+        // scrolling up -> show header and restore reserved padding
         header.classList.remove('is-hidden');
         header.classList.add('is-shown');
+        try {
+          const h = header.getBoundingClientRect().height;
+          document.documentElement.style.setProperty('--header-height', h + 'px');
+          if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
+        } catch (e) {}
       }
       lastY = y;
     }
