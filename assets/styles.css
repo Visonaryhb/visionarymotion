@@ -1138,7 +1138,7 @@ h1, h2, h3, h4 {
   }
 
   .site-header.is-shown .logo {
-    height: 120px; /* larger initial logo on mobile */
+    height: 140px; /* larger initial logo on mobile (increased per user request) */
   }
 
   .site-header.is-shown .brand-text {
@@ -1150,6 +1150,14 @@ h1, h2, h3, h4 {
   .site-header.is-shown .brand-slogan {
     font-size: 1rem;
     opacity: 1;
+    display: block !important; /* ensure visible even when small-screen rules hide it */
+  }
+
+  /* On very small screens the theme hid the slogan; force it visible when header is in shown state */
+  @media (max-width: 480px) {
+    .site-header.is-shown .logo { height: 120px; }
+    .site-header.is-shown .brand-slogan { display: block !important; font-size: 0.9rem !important; opacity: 1 !important; }
+    .site-header.is-shown .brand-text { opacity: 1 !important; }
   }
 
   /* Make nav links smaller in compact mode */
