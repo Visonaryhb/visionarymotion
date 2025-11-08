@@ -474,6 +474,16 @@ modal.addEventListener('click', e => {
     } catch (e) {}
   }
 
+  function hideHeader() {
+    try {
+      header.classList.add('is-hidden');
+      header.classList.remove('is-shown');
+      // when hidden, ensure main padding doesn't reserve header space
+      document.documentElement.style.setProperty('--header-height', '0px');
+      if (isMobile()) try { document.querySelector('main').style.paddingTop = '0px'; } catch (e) {}
+    } catch (e) {}
+  }
+
   function update() {
     const y = window.scrollY || window.pageYOffset || 0;
     if (y <= 20) {
@@ -546,3 +556,19 @@ modal.addEventListener('click', e => {
   window.addEventListener('touchend', onTouchEnd, { passive: true });
 
 })();
+
+// Nav toggle (mobile) - toggle header-nav collapse
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const toggle = document.querySelector('.nav-toggle');
+    const nav = document.querySelector('.header-nav');
+    if (!toggle || !nav) return;
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.classList.toggle('open');
+      nav.classList.toggle('is-open', isOpen);
+      toggle.setAttribute('aria-expanded', String(isOpen));
+    });
+  } catch (e) {
+    // ignore
+  }
+});
