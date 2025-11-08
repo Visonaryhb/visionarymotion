@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Visionary Motion - Mobile Header Test</title>
+
+<style>
+/* MOBILE HEADER - WORKING SOLUTION */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding: 0.75rem 0;
+  transition: all 0.3s ease;
+}
+
+.site-header.scrolled {
+  padding: 0.25rem 0;
+}
+
+.header-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0 1rem;
+  transition: gap 0.3s ease;
+}
+
+.site-header.scrolled .header-inner {
+  gap: 0.25rem;
+}
+
+.brand {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.logo {
+  height: 110px;
+  width: auto;
+  transition: all 0.3s ease;
+}
+
+.site-header.scrolled .logo {
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.brand-text {
+  text-align: center;
+}
+
+.name {
+  font-size: 1.3rem;
+  margin: 0;
+  color: #C4945E;
+  font-family: 'Playfair Display', serif;
+  transition: font-size 0.3s ease;
+}
+
+.site-header.scrolled .name {
+  font-size: 1rem;
+}
+
+.brand-slogan {
+  font-size: 1rem;
+  margin: 0;
+  color: #666;
+  transition: font-size 0.3s ease;
+}
+
+.site-header.scrolled .brand-slogan {
+  font-size: 0.8rem;
+}
+
+.header-nav {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  transition: all 0.3s ease;
+}
+
+.site-header.scrolled .header-nav {
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.header-nav a,
+.header-nav button {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  color: #1a1a1a;
+  text-decoration: none;
+  background: none;
+  border: none;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+main {
+  padding-top: 150px;
+  padding: 150px 1rem 2rem;
+}
+
+.content {
+  height: 200vh;
+  background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+  padding: 2rem;
+}
+
+h1 {
+  color: #C4945E;
+  font-family: 'Playfair Display', serif;
+}
+</style>
+</head>
+<body>
+
+<header class="site-header" id="header">
+<div class="header-inner">
+<div class="brand">
+<img alt="Logo" class="logo" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><circle cx='50' cy='50' r='40' fill='%23C4945E'/><text x='50' y='55' text-anchor='middle' fill='white' font-size='14'>VM</text></svg>"/>
+<div class="brand-text">
+<h1 class="name">Visionary Motion</h1>
+<p class="brand-slogan">We turn Vision into Motion</p>
+</div>
+</div>
+<nav class="header-nav">
+<a href="#about">Über uns</a>
+<a href="#services">Leistungen</a>
+<a href="#videos">Portfolio</a>
+<button>Kontakt</button>
+</nav>
+</div>
+</header>
+
+<main>
+<div class="content">
+<h1>Test der Mobile Header Funktionalität</h1>
+<p>Scrollen Sie nach unten um zu sehen wie der Header schrumpft!</p>
+<p>Das Logo und die Navigation sollten verschwinden, während Name und Slogan sichtbar bleiben.</p>
+<br><br>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+<br><br>
+<p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+<br><br>
+<p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+<br><br>
+<p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+</div>
+</main>
+
+<script>
+// SIMPLE WORKING SCROLL HANDLER
+let lastScrollY = 0;
+let isScrolled = false;
+
+function updateHeader() {
+  const currentScrollY = window.scrollY;
+  const header = document.getElementById('header');
+  
+  if (currentScrollY > 80 && !isScrolled) {
+    header.classList.add('scrolled');
+    isScrolled = true;
+    console.log('Header scrolled - logo and nav hidden');
+  } else if (currentScrollY <= 80 && isScrolled) {
+    header.classList.remove('scrolled');
+    isScrolled = false;
+    console.log('Header normal - everything visible');
+  }
+  
+  lastScrollY = currentScrollY;
+}
+
+// Listen to scroll
+window.addEventListener('scroll', updateHeader, { passive: true });
+
+// Initial call
+updateHeader();
+
+console.log('Mobile header test ready - scroll to see effect');
+</script>
+
+</body>
+</html>
