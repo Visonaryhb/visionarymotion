@@ -1155,8 +1155,8 @@ h1, h2, h3, h4 {
 
   /* On very small screens the theme hid the slogan; force it visible when header is in shown state */
   @media (max-width: 480px) {
-    .site-header.is-shown .logo { height: 120px; }
-    .site-header.is-shown .brand-slogan { display: block !important; font-size: 0.9rem !important; opacity: 1 !important; }
+    .site-header.is-shown .logo { height: 150px; }
+    .site-header.is-shown .brand-slogan { display: block !important; font-size: 1rem !important; opacity: 1 !important; }
     .site-header.is-shown .brand-text { opacity: 1 !important; }
   }
 
