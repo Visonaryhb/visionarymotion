@@ -80,6 +80,95 @@ h1, h2, h3, h4 {
   border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
+/* MOBILE HEADER - EXTREME SIZE REDUCTION */
+@media (max-width: 768px) {
+  .site-header {
+    padding: 0.1rem 0 !important; /* MINIMAL padding */
+    min-height: auto !important;
+  }
+  
+  .header-inner {
+    gap: 0.5rem !important;
+    min-height: auto !important;
+  }
+  
+  .brand {
+    gap: 0.3rem !important;
+    align-items: center !important;
+  }
+  
+  .logo {
+    height: 30px !important; /* TINY logo */
+    width: auto !important;
+  }
+  
+  .brand-text {
+    line-height: 1 !important;
+  }
+  
+  .name {
+    font-size: 0.75rem !important; /* TINY text */
+    margin: 0 !important;
+    line-height: 1 !important;
+  }
+  
+  .brand-slogan {
+    font-size: 0.6rem !important; /* TINY slogan */
+    margin: 0 !important;
+    line-height: 1 !important;
+    opacity: 0.7 !important;
+  }
+  
+  /* Make navigation compact */
+  .header-nav {
+    gap: 0.3rem !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .header-nav a {
+    padding: 0.2rem 0.4rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .contact-trigger {
+    padding: 0.2rem 0.5rem !important;
+    font-size: 0.7rem !important;
+  }
+  
+  .social {
+    padding: 0.2rem 0.4rem !important;
+    font-size: 0.7rem !important;
+  }
+}
+
+/* EXTRA SMALL MOBILE - EVEN SMALLER */
+@media (max-width: 480px) {
+  .site-header {
+    padding: 0.05rem 0 !important;
+  }
+  
+  .logo {
+    height: 25px !important;
+  }
+  
+  .name {
+    font-size: 0.7rem !important;
+  }
+  
+  .brand-slogan {
+    display: none !important; /* Hide completely on very small screens */
+  }
+  
+  .header-nav {
+    font-size: 0.7rem !important;
+  }
+  
+  .header-nav a {
+    font-size: 0.7rem !important;
+    padding: 0.1rem 0.3rem !important;
+  }
+}
+
 .header-inner {
   display: flex;
   justify-content: center;
@@ -223,16 +312,52 @@ h1, h2, h3, h4 {
   /* slightly larger than original, minimal change */
   height: 160px;
   width: auto;
-  transition: transform 0.3s ease;
+  transition: height 0.3s ease, transform 0.3s ease;
 }
 
 .logo:hover {
   transform: scale(1.05);
 }
 
+/* Mobile Logo Optimizations */
+@media (max-width: 768px) {
+  .logo {
+    height: 60px; /* Deutlich kleiner für mobile Geräte */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 50px; /* Noch kleiner für sehr kleine Bildschirme */
+  }
+}
+
 .name {
   font-size: 1.5rem;
   margin: 0;
+  transition: font-size 0.3s ease;
+}
+
+/* Mobile Name/Brand Text Optimizations */
+@media (max-width: 768px) {
+  .name {
+    font-size: 1.1rem; /* Kleinere Schrift für mobil */
+  }
+  
+  .brand-slogan {
+    font-size: 0.8rem; /* Kleinerer Slogan */
+    transition: font-size 0.3s ease, opacity 0.3s ease;
+  }
+}
+
+@media (max-width: 480px) {
+  .name {
+    font-size: 1rem; /* Noch kleiner */
+  }
+  
+  .brand-slogan {
+    font-size: 0.75rem;
+  }
 }
 
 .role {
@@ -943,6 +1068,28 @@ h1, h2, h3, h4 {
     height: 110px;
   }
 
+
+/* Hide header on scroll (mobile): slide out when scrolling down, slide in when scrolling up */
+@media (max-width: 768px) {
+  .site-header.hide-on-scroll {
+    transition: transform 0.28s ease, opacity 0.28s ease;
+    will-change: transform, opacity;
+  }
+
+  /* hidden state: move header fully out of view */
+  .site-header.hide-on-scroll.is-hidden {
+    transform: translateY(-110%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* shown state: visible again */
+  .site-header.hide-on-scroll.is-shown {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
   /* Nav toggle (hamburger) - visible on small screens */
   .nav-toggle {
     display: inline-flex;

@@ -197,43 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
   buildCategoryFilters();
 });
 
-// Entrance animation: staggered reveal of video cards using IntersectionObserver
-document.addEventListener('DOMContentLoaded', () => {
-  try {
-    const cards = Array.from(document.querySelectorAll('.video-card'));
-    if (!('IntersectionObserver' in window) || cards.length === 0) {
-      // fallback: just reveal all
-      cards.forEach(c => c.classList.add('in-view'));
-      return;
-    }
-
-    const obs = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const el = entry.target;
-          // compute stagger based on index among siblings
-          const idx = cards.indexOf(el);
-          const delay = Math.min(300, idx * 70); // cap delay
-          el.style.setProperty('--d', `${delay}ms`);
-          el.classList.add('in-view');
-          observer.unobserve(el);
-        }
-      });
-    }, { threshold: 0.12 });
-
-    cards.forEach(c => obs.observe(c));
-  } catch (e) {
-    // fail silently
-  }
-});
-
-// Limit previews: don't allow previews on small screens and ensure only one active preview at a time
-let _activePreviewCard = null;
-
-function _isMobileViewport() {
-  try { return window.matchMedia && window.matchMedia('(max-width: 767px)').matches; } catch (e) { return false; }
-}
-
 // Modal handling
 const closeButtons = document.querySelectorAll('[data-close]');
 let currentVideo = null;
@@ -365,25 +328,6 @@ videoCards.forEach(card => {
       v.src = card.dataset.video;
       v.preload = 'auto';
     }
-    // start hover preview after a short delay
-    if (card._previewTimeout) clearTimeout(card._previewTimeout);
-    card._previewTimeout = setTimeout(() => startPreview(card), 220);
-  });
-
-  card.addEventListener('mouseleave', () => {
-    if (card._previewTimeout) { clearTimeout(card._previewTimeout); card._previewTimeout = null; }
-    stopPreview(card);
-  });
-
-  card.addEventListener('focusin', () => {
-    // keyboard focus also triggers a preview
-    if (card._previewTimeout) clearTimeout(card._previewTimeout);
-    card._previewTimeout = setTimeout(() => startPreview(card), 220);
-  });
-
-  card.addEventListener('focusout', () => {
-    if (card._previewTimeout) { clearTimeout(card._previewTimeout); card._previewTimeout = null; }
-    stopPreview(card);
   });
 
   card.addEventListener('click', async () => {
@@ -427,73 +371,6 @@ videoCards.forEach(card => {
   });
 });
 
-// Hover preview helpers
-function startPreview(card) {
-  try {
-    if (!card || card._previewActive) return;
-    const videoSrc = card.dataset.video;
-    const thumbEl = card.querySelector('.video-thumb');
-    if (!videoSrc || !thumbEl) return;
-
-    const ytId = extractYouTubeID(videoSrc);
-    if (_isMobileViewport()) return; // disable previews on small/touch devices
-
-    if (ytId) {
-      // ensure only one preview active
-      if (_activePreviewCard && _activePreviewCard !== card) stopPreview(_activePreviewCard);
-      const iframe = document.createElement('iframe');
-      iframe.className = 'preview-layer';
-      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
-      iframe.setAttribute('frameborder', '0');
-      // autoplay muted loop via playlist param
-      iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&playsinline=1&loop=1&playlist=${ytId}`;
-      thumbEl.appendChild(iframe);
-      card._previewEl = iframe;
-      card._previewActive = true;
-      _activePreviewCard = card;
-      return;
-    }
-
-    // local MP4 preview
-    const v = document.createElement('video');
-    v.className = 'preview-layer';
-    v.src = videoSrc;
-    v.muted = true;
-    v.loop = true;
-    v.autoplay = true;
-    v.playsInline = true;
-    v.preload = 'auto';
-    v.style.width = '100%';
-    v.style.height = '100%';
-    v.style.objectFit = 'cover';
-    // ensure only one preview active
-    if (_activePreviewCard && _activePreviewCard !== card) stopPreview(_activePreviewCard);
-    thumbEl.appendChild(v);
-    // attempt to play (may be blocked if not muted, but we set muted)
-    v.play().catch(() => {});
-    card._previewEl = v;
-    card._previewActive = true;
-    _activePreviewCard = card;
-  } catch (e) {
-    // fail quietly
-  }
-}
-
-function stopPreview(card) {
-  try {
-    if (!card) return;
-    const el = card._previewEl;
-    if (!el) return;
-    // pause video if it's a video element
-    try { if (el.tagName && el.tagName.toLowerCase() === 'video') el.pause(); } catch (e) {}
-    if (el.remove) el.remove();
-    card._previewEl = null;
-    card._previewActive = false;
-  } catch (e) {
-    // ignore
-  }
-}
-
 function closeModal() {
   if (currentVideo) {
     try {
@@ -536,47 +413,75 @@ modal.addEventListener('click', e => {
   }
 });
 
-// --- Mobile nav toggle (hamburger) ---
-function setupMobileNav() {
-  try {
-    const toggle = document.querySelector('.nav-toggle');
-    const nav = document.getElementById('main-nav');
-    if (!toggle || !nav) return;
+// --- Hide header on mobile scroll: hide on scroll down, show on scroll up ---
+(function() {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
 
-    const closeNav = () => {
-      nav.classList.remove('is-open');
-      toggle.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.setAttribute('aria-label', 'Menü öffnen');
-    };
-
-    const openNav = () => {
-      nav.classList.add('is-open');
-      toggle.classList.add('open');
-      toggle.setAttribute('aria-expanded', 'true');
-      toggle.setAttribute('aria-label', 'Menü schließen');
-      const first = nav.querySelector('a, button');
-      if (first) first.focus();
-    };
-
-    toggle.addEventListener('click', (e) => {
-      const expanded = toggle.getAttribute('aria-expanded') === 'true';
-      if (expanded) closeNav(); else openNav();
-    });
-
-    document.addEventListener('keydown', (ev) => {
-      if (ev.key === 'Escape') closeNav();
-    });
-
-    document.addEventListener('click', (ev) => {
-      if (!nav.classList.contains('is-open')) return;
-      if (nav.contains(ev.target) || toggle.contains(ev.target)) return;
-      closeNav();
-    });
-  } catch (e) {
-    // noop
+  // Enable only on small screens; a class is used to control styles
+  function isMobile() {
+    return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
   }
-}
 
-// Initialize mobile nav on DOM ready
-document.addEventListener('DOMContentLoaded', setupMobileNav);
+  let lastY = window.scrollY || window.pageYOffset || 0;
+  let ticking = false;
+  const THRESHOLD = 8; // px change required to trigger
+  const MIN_SCROLL_TO_HIDE = 60; // don't hide for tiny scrolls near top
+
+  // Prepare header style hook
+  header.classList.add('hide-on-scroll');
+
+  function update() {
+    const y = window.scrollY || window.pageYOffset || 0;
+    // if near top always show
+    if (y <= 20) {
+      header.classList.remove('is-hidden');
+      header.classList.add('is-shown');
+      lastY = y;
+      ticking = false;
+      return;
+    }
+
+    const delta = y - lastY;
+    if (Math.abs(delta) > THRESHOLD) {
+      if (delta > 0 && y > MIN_SCROLL_TO_HIDE) {
+        // scrolling down
+        header.classList.add('is-hidden');
+        header.classList.remove('is-shown');
+      } else {
+        // scrolling up
+        header.classList.remove('is-hidden');
+        header.classList.add('is-shown');
+      }
+      lastY = y;
+    }
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!isMobile()) return; // only active on mobile sized viewports
+    if (!ticking) {
+      window.requestAnimationFrame(update);
+      ticking = true;
+    }
+  }
+
+  // Start/stop listeners on resize to avoid unnecessary handlers on desktop
+  function handleResize() {
+    if (isMobile()) {
+      window.addEventListener('scroll', onScroll, { passive: true });
+    } else {
+      window.removeEventListener('scroll', onScroll);
+      header.classList.remove('is-hidden');
+      header.classList.remove('is-shown');
+      header.classList.remove('hide-on-scroll');
+    }
+  }
+
+  // initial attach if mobile
+  if (isMobile()) window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', handleResize);
+  // ensure header visible on load
+  window.addEventListener('load', () => { header.classList.add('is-shown'); });
+
+})();
