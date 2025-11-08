@@ -1131,6 +1131,27 @@ h1, h2, h3, h4 {
     opacity: 0.9;
   }
 
+  /* Initial visible state on mobile: make logo larger and keep name + slogan visible.
+     We target .site-header.is-shown so it overrides earlier !important reductions. */
+  .site-header.is-shown {
+    transition: transform 0.28s ease, opacity 0.28s ease, height 0.22s ease;
+  }
+
+  .site-header.is-shown .logo {
+    height: 120px; /* larger initial logo on mobile */
+  }
+
+  .site-header.is-shown .brand-text {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  .site-header.is-shown .brand-slogan {
+    font-size: 1rem;
+    opacity: 1;
+  }
+
   /* Make nav links smaller in compact mode */
   .site-header.compact .header-nav a,
   .site-header.compact .contact-trigger {
