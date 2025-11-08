@@ -482,6 +482,29 @@ modal.addEventListener('click', e => {
   if (isMobile()) window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', handleResize);
   // ensure header visible on load
-  window.addEventListener('load', () => { header.classList.add('is-shown'); });
+  window.addEventListener('load', () => { 
+    header.classList.add('is-shown');
+    // compute and set header height CSS var and main padding so fixed header doesn't cover content
+    try {
+      const h = header.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--header-height', h + 'px');
+      if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
+    } catch (e) { /* ignore */ }
+  });
+
+  // update header height on resize (mobile <-> desktop)
+  window.addEventListener('resize', () => {
+    try {
+      if (!header) return;
+      const h = header.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--header-height', h + 'px');
+      if (isMobile()) {
+        document.querySelector('main').style.paddingTop = h + 'px';
+      } else {
+        // remove padding on desktop
+        document.querySelector('main').style.paddingTop = '';
+      }
+    } catch (e) {}
+  });
 
 })();

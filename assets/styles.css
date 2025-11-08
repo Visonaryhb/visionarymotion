@@ -1074,6 +1074,16 @@ h1, h2, h3, h4 {
   .site-header.hide-on-scroll {
     transition: transform 0.28s ease, opacity 0.28s ease;
     will-change: transform, opacity;
+    /* switch to fixed so it overlays content cleanly and can be translated out of view */
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 100%;
+    z-index: 1100; /* ensure above other elements */
+    background: rgba(255,255,255,0.95);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
   }
 
   /* hidden state: move header fully out of view */
@@ -1088,6 +1098,13 @@ h1, h2, h3, h4 {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
+  }
+}
+
+/* ensure main content isn't hidden under a fixed header on mobile; JS will set --header-height */
+@media (max-width: 768px) {
+  main {
+    padding-top: var(--header-height, 0px);
   }
 }
   /* Nav toggle (hamburger) - visible on small screens */
