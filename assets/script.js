@@ -452,20 +452,29 @@ modal.addEventListener('click', e => {
     if (Math.abs(delta) > THRESHOLD) {
       if (delta > 0 && y > MIN_SCROLL_TO_HIDE) {
         // scrolling down -> hide header and remove reserved padding so content fills screen
-        header.classList.add('is-hidden');
-        header.classList.remove('is-shown');
         try {
+          // first animate out
+          header.classList.add('is-hidden');
+          header.classList.remove('is-shown');
+          // remove reserved space immediately so content moves up
           document.documentElement.style.setProperty('--header-height', '0px');
           if (isMobile()) document.querySelector('main').style.paddingTop = '0px';
+          // also set display none after a tiny delay to ensure it's fully gone and doesn't block interactions
+          window.setTimeout(() => {
+            try { header.style.display = 'none'; } catch (e) {}
+          }, 160);
         } catch (e) {}
       } else {
         // scrolling up -> show header and restore reserved padding
-        header.classList.remove('is-hidden');
-        header.classList.add('is-shown');
         try {
+          // restore display first so getBoundingClientRect returns correct height
+          header.style.display = '';
           const h = header.getBoundingClientRect().height;
           document.documentElement.style.setProperty('--header-height', h + 'px');
           if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
+          // then animate in
+          header.classList.remove('is-hidden');
+          header.classList.add('is-shown');
         } catch (e) {}
       }
       lastY = y;
