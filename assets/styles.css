@@ -1101,6 +1101,38 @@ h1, h2, h3, h4 {
   }
 }
 
+/* Compact header state on mobile: reduce height, hide slogan and shrink logo */
+@media (max-width: 768px) {
+  .site-header.compact {
+    height: 56px;
+    padding: 0.35rem 0;
+    transition: height 0.22s ease, padding 0.22s ease, transform 0.22s ease;
+  }
+
+  .site-header.compact .brand {
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .site-header.compact .logo {
+    height: 44px;
+  }
+
+  .site-header.compact .brand-text {
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+  }
+
+  /* Make nav links smaller in compact mode */
+  .site-header.compact .header-nav a,
+  .site-header.compact .contact-trigger {
+    font-size: 0.9rem;
+    padding: 0.35rem 0.6rem;
+  }
+}
+
 /* ensure main content isn't hidden under a fixed header on mobile; JS will set --header-height */
 @media (max-width: 768px) {
   main {

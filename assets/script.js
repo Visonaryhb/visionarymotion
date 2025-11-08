@@ -456,30 +456,27 @@ modal.addEventListener('click', e => {
     try { console.log('[hide-on-scroll] delta=', delta, 'lastY=', lastY, 'y=', y); } catch (e) {}
     if (Math.abs(delta) > THRESHOLD) {
       if (delta > 0 && y > MIN_SCROLL_TO_HIDE) {
-        // scrolling down -> hide header and remove reserved padding so content fills screen
+        // scrolling down -> switch to compact header (reduce size) instead of fully hiding
         try {
-          try { console.log('[hide-on-scroll] scrolling down — hiding header'); } catch (e) {}
-          // first animate out
-          header.classList.add('is-hidden');
+          console.log('[hide-on-scroll] scrolling down — compact header');
+          header.classList.add('compact');
           header.classList.remove('is-shown');
-          // remove reserved space immediately so content moves up
-          document.documentElement.style.setProperty('--header-height', '0px');
-          if (isMobile()) document.querySelector('main').style.paddingTop = '0px';
-          // remove immediately so it doesn't block interactions on mobile
-          try { header.style.display = 'none'; } catch (e) {}
+          header.classList.remove('is-hidden');
+          // set compact reserved height so content stays visible but header takes less space
+          const compactHeight = 56;
+          document.documentElement.style.setProperty('--header-height', compactHeight + 'px');
+          if (isMobile()) document.querySelector('main').style.paddingTop = compactHeight + 'px';
         } catch (e) {}
       } else {
-        // scrolling up -> show header and restore reserved padding
+        // scrolling up -> restore full header
         try {
-          try { console.log('[hide-on-scroll] scrolling up — showing header'); } catch (e) {}
-          // restore display first so getBoundingClientRect returns correct height
-          header.style.display = '';
-          const h = header.getBoundingClientRect().height;
-          document.documentElement.style.setProperty('--header-height', h + 'px');
-          if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
-          // then animate in
+          console.log('[hide-on-scroll] scrolling up — restore full header');
+          header.classList.remove('compact');
           header.classList.remove('is-hidden');
           header.classList.add('is-shown');
+          const h = header.getBoundingClientRect().height || 120;
+          document.documentElement.style.setProperty('--header-height', h + 'px');
+          if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
         } catch (e) {}
       }
       lastY = y;
