@@ -459,10 +459,8 @@ modal.addEventListener('click', e => {
           // remove reserved space immediately so content moves up
           document.documentElement.style.setProperty('--header-height', '0px');
           if (isMobile()) document.querySelector('main').style.paddingTop = '0px';
-          // also set display none after a tiny delay to ensure it's fully gone and doesn't block interactions
-          window.setTimeout(() => {
-            try { header.style.display = 'none'; } catch (e) {}
-          }, 160);
+          // remove immediately so it doesn't block interactions on mobile
+          try { header.style.display = 'none'; } catch (e) {}
         } catch (e) {}
       } else {
         // scrolling up -> show header and restore reserved padding
