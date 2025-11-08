@@ -429,19 +429,23 @@ modal.addEventListener('click', e => {
 
   header.classList.add('hide-on-scroll');
 
-  function hideHeader() {
+  // Compact header: reduce height but keep slogan/brand visible
+  function compactHeader() {
     try {
-      header.classList.add('is-hidden');
+      header.classList.add('compact');
+      header.classList.remove('is-hidden');
       header.classList.remove('is-shown');
-      document.documentElement.style.setProperty('--header-height', '0px');
-      if (isMobile()) document.querySelector('main').style.paddingTop = '0px';
-      header.style.display = 'none';
-      document.documentElement.classList.add('mobile-header-hidden');
+      const compactHeight = 56;
+      document.documentElement.style.setProperty('--header-height', compactHeight + 'px');
+      if (isMobile()) document.querySelector('main').style.paddingTop = compactHeight + 'px';
+      // ensure visible
+      header.style.display = '';
     } catch (e) {}
   }
 
   function showHeader() {
     try {
+      header.classList.remove('compact');
       header.style.display = '';
       const h = header.getBoundingClientRect().height || 120;
       document.documentElement.style.setProperty('--header-height', h + 'px');
@@ -464,8 +468,10 @@ modal.addEventListener('click', e => {
     const delta = y - lastY;
     if (Math.abs(delta) > THRESHOLD) {
       if (delta > 0 && y > MIN_SCROLL_TO_HIDE) {
-        hideHeader();
+        // scrolling down -> compact the header but keep slogan visible
+        compactHeader();
       } else {
+        // scrolling up -> restore full header
         showHeader();
       }
       lastY = y;
