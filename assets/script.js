@@ -418,62 +418,55 @@ modal.addEventListener('click', e => {
   const header = document.querySelector('.site-header');
   if (!header) return;
 
-  // Enable only on small screens; a class is used to control styles
   function isMobile() {
     return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
   }
 
-  // hide-on-scroll module initialized
-
   let lastY = window.scrollY || window.pageYOffset || 0;
   let ticking = false;
-  const THRESHOLD = 8; // px change required to trigger
-  const MIN_SCROLL_TO_HIDE = 60; // don't hide for tiny scrolls near top
+  const THRESHOLD = 8;
+  const MIN_SCROLL_TO_HIDE = 60;
 
-  // Prepare header style hook
   header.classList.add('hide-on-scroll');
+
+  function hideHeader() {
+    try {
+      header.classList.add('is-hidden');
+      header.classList.remove('is-shown');
+      document.documentElement.style.setProperty('--header-height', '0px');
+      if (isMobile()) document.querySelector('main').style.paddingTop = '0px';
+      header.style.display = 'none';
+      document.documentElement.classList.add('mobile-header-hidden');
+    } catch (e) {}
+  }
+
+  function showHeader() {
+    try {
+      header.style.display = '';
+      const h = header.getBoundingClientRect().height || 120;
+      document.documentElement.style.setProperty('--header-height', h + 'px');
+      if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
+      header.classList.remove('is-hidden');
+      header.classList.add('is-shown');
+      document.documentElement.classList.remove('mobile-header-hidden');
+    } catch (e) {}
+  }
 
   function update() {
     const y = window.scrollY || window.pageYOffset || 0;
-    // if near top always show
     if (y <= 20) {
-      header.classList.remove('is-hidden');
-      header.classList.add('is-shown');
-      // ensure main padding reserved when header is visible
-      try {
-        const h = header.getBoundingClientRect().height;
-        document.documentElement.style.setProperty('--header-height', h + 'px');
-        if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
-      } catch (e) {}
+      showHeader();
       lastY = y;
       ticking = false;
       return;
     }
 
     const delta = y - lastY;
-  // debug removed
     if (Math.abs(delta) > THRESHOLD) {
       if (delta > 0 && y > MIN_SCROLL_TO_HIDE) {
-        // scrolling down -> switch to compact header (reduce size) instead of fully hiding
-        try {
-          header.classList.add('compact');
-          header.classList.remove('is-shown');
-          header.classList.remove('is-hidden');
-          // set compact reserved height so content stays visible but header takes less space
-          const compactHeight = 56;
-          document.documentElement.style.setProperty('--header-height', compactHeight + 'px');
-          if (isMobile()) document.querySelector('main').style.paddingTop = compactHeight + 'px';
-        } catch (e) {}
+        hideHeader();
       } else {
-        // scrolling up -> restore full header
-        try {
-          header.classList.remove('compact');
-          header.classList.remove('is-hidden');
-          header.classList.add('is-shown');
-          const h = header.getBoundingClientRect().height || 120;
-          document.documentElement.style.setProperty('--header-height', h + 'px');
-          if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
-        } catch (e) {}
+        showHeader();
       }
       lastY = y;
     }
@@ -481,45 +474,25 @@ modal.addEventListener('click', e => {
   }
 
   function onScroll() {
-    if (!isMobile()) return; // only active on mobile sized viewports
+    if (!isMobile()) return;
     if (!ticking) {
       window.requestAnimationFrame(update);
       ticking = true;
     }
   }
 
-  // Touch fallback: some mobile browsers/webviews don't fire scroll events reliably while content scrolls.
-  // Detect touchmove direction and hide/show header immediately by toggling `html.mobile-header-hidden`.
+  // Touch fallback for webviews
   let touchStartY = null;
-  function onTouchStart(e) {
-    if (!isMobile()) return;
-    touchStartY = (e.touches && e.touches[0] && e.touches[0].clientY) || null;
-  }
+  function onTouchStart(e) { if (!isMobile()) return; touchStartY = (e.touches && e.touches[0] && e.touches[0].clientY) || null; }
   function onTouchMove(e) {
-    try {
-      if (!isMobile() || touchStartY === null) return;
-      const y = (e.touches && e.touches[0] && e.touches[0].clientY) || 0;
-      const dy = y - touchStartY;
-      // dy < 0 => moving up the page (user scrolls down), hide header
-      if (dy < -10) {
-        document.documentElement.classList.add('mobile-header-hidden');
-        // ensure header display none as well
-        try { document.querySelector('.site-header').style.display = 'none'; } catch (e) {}
-      }
-      // dy > 10 => moving down the page (user scrolls up), show header
-      if (dy > 10) {
-        document.documentElement.classList.remove('mobile-header-hidden');
-        try { document.querySelector('.site-header').style.display = ''; } catch (e) {}
-      }
-    } catch (e) {}
+    if (!isMobile() || touchStartY === null) return;
+    const y = (e.touches && e.touches[0] && e.touches[0].clientY) || 0;
+    const dy = y - touchStartY;
+    if (dy < -10) hideHeader();
+    if (dy > 10) showHeader();
   }
   function onTouchEnd() { touchStartY = null; }
 
-  window.addEventListener('touchstart', onTouchStart, { passive: true });
-  window.addEventListener('touchmove', onTouchMove, { passive: true });
-  window.addEventListener('touchend', onTouchEnd, { passive: true });
-
-  // Start/stop listeners on resize to avoid unnecessary handlers on desktop
   function handleResize() {
     if (isMobile()) {
       window.addEventListener('scroll', onScroll, { passive: true });
@@ -528,36 +501,24 @@ modal.addEventListener('click', e => {
       header.classList.remove('is-hidden');
       header.classList.remove('is-shown');
       header.classList.remove('hide-on-scroll');
+      try { document.querySelector('main').style.paddingTop = ''; } catch (e) {}
     }
   }
 
-  // initial attach if mobile
   if (isMobile()) window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', handleResize);
-  // ensure header visible on load
-  window.addEventListener('load', () => { 
-    header.classList.add('is-shown');
-    // compute and set header height CSS var and main padding so fixed header doesn't cover content
+  window.addEventListener('load', () => { showHeader(); });
+
+  window.addEventListener('resize', () => {
     try {
       const h = header.getBoundingClientRect().height;
       document.documentElement.style.setProperty('--header-height', h + 'px');
       if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
-    } catch (e) { /* ignore */ }
-  });
-
-  // update header height on resize (mobile <-> desktop)
-  window.addEventListener('resize', () => {
-    try {
-      if (!header) return;
-      const h = header.getBoundingClientRect().height;
-      document.documentElement.style.setProperty('--header-height', h + 'px');
-      if (isMobile()) {
-        document.querySelector('main').style.paddingTop = h + 'px';
-      } else {
-        // remove padding on desktop
-        document.querySelector('main').style.paddingTop = '';
-      }
     } catch (e) {}
   });
+
+  window.addEventListener('touchstart', onTouchStart, { passive: true });
+  window.addEventListener('touchmove', onTouchMove, { passive: true });
+  window.addEventListener('touchend', onTouchEnd, { passive: true });
 
 })();
