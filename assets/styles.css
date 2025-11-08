@@ -1107,6 +1107,17 @@ h1, h2, h3, h4 {
     padding-top: var(--header-height, 0px);
   }
 }
+
+/* Emergency CSS hook: when JS cannot rely on scroll events, this class hides the header fully */
+html.mobile-header-hidden .site-header {
+  display: none !important;
+  transform: translateY(-110%) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+html.mobile-header-hidden main {
+  padding-top: 0 !important;
+}
   /* Nav toggle (hamburger) - visible on small screens */
   .nav-toggle {
     display: inline-flex;

@@ -495,6 +495,37 @@ modal.addEventListener('click', e => {
     }
   }
 
+  // Touch fallback: some mobile browsers/webviews don't fire scroll events reliably while content scrolls.
+  // Detect touchmove direction and hide/show header immediately by toggling `html.mobile-header-hidden`.
+  let touchStartY = null;
+  function onTouchStart(e) {
+    if (!isMobile()) return;
+    touchStartY = (e.touches && e.touches[0] && e.touches[0].clientY) || null;
+  }
+  function onTouchMove(e) {
+    try {
+      if (!isMobile() || touchStartY === null) return;
+      const y = (e.touches && e.touches[0] && e.touches[0].clientY) || 0;
+      const dy = y - touchStartY;
+      // dy < 0 => moving up the page (user scrolls down), hide header
+      if (dy < -10) {
+        document.documentElement.classList.add('mobile-header-hidden');
+        // ensure header display none as well
+        try { document.querySelector('.site-header').style.display = 'none'; } catch (e) {}
+      }
+      // dy > 10 => moving down the page (user scrolls up), show header
+      if (dy > 10) {
+        document.documentElement.classList.remove('mobile-header-hidden');
+        try { document.querySelector('.site-header').style.display = ''; } catch (e) {}
+      }
+    } catch (e) {}
+  }
+  function onTouchEnd() { touchStartY = null; }
+
+  window.addEventListener('touchstart', onTouchStart, { passive: true });
+  window.addEventListener('touchmove', onTouchMove, { passive: true });
+  window.addEventListener('touchend', onTouchEnd, { passive: true });
+
   // Start/stop listeners on resize to avoid unnecessary handlers on desktop
   function handleResize() {
     if (isMobile()) {
