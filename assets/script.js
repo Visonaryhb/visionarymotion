@@ -440,6 +440,15 @@ modal.addEventListener('click', e => {
       if (isMobile()) document.querySelector('main').style.paddingTop = compactHeight + 'px';
       // ensure visible
       header.style.display = '';
+      // ensure slogan remains visible in compact state
+      try {
+        const slogan = header.querySelector('.brand-slogan');
+        if (slogan) {
+          slogan.style.display = 'block';
+          slogan.style.opacity = '0.9';
+          slogan.style.fontSize = '0.85rem';
+        }
+      } catch (e) {}
     } catch (e) {}
   }
 
@@ -453,6 +462,15 @@ modal.addEventListener('click', e => {
       header.classList.remove('is-hidden');
       header.classList.add('is-shown');
       document.documentElement.classList.remove('mobile-header-hidden');
+      // Force slogan visible (some browsers/webviews may apply earlier CSS rules)
+      try {
+        const slogan = header.querySelector('.brand-slogan');
+        if (slogan) {
+          slogan.style.display = 'block';
+          slogan.style.opacity = '1';
+          slogan.style.fontSize = '1rem';
+        }
+      } catch (e) {}
     } catch (e) {}
   }
 
