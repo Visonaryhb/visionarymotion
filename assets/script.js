@@ -423,6 +423,9 @@ modal.addEventListener('click', e => {
     return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
   }
 
+  // DEBUG: indicate that the hide-on-scroll module initialized
+  try { console.log('[hide-on-scroll] init — isMobile=', !!(window.matchMedia && window.matchMedia('(max-width: 768px)').matches)); } catch (e) {}
+
   let lastY = window.scrollY || window.pageYOffset || 0;
   let ticking = false;
   const THRESHOLD = 8; // px change required to trigger
@@ -435,6 +438,7 @@ modal.addEventListener('click', e => {
     const y = window.scrollY || window.pageYOffset || 0;
     // if near top always show
     if (y <= 20) {
+      try { console.log('[hide-on-scroll] near-top -> show (y=' + y + ')'); } catch (e) {}
       header.classList.remove('is-hidden');
       header.classList.add('is-shown');
       // ensure main padding reserved when header is visible
@@ -449,10 +453,12 @@ modal.addEventListener('click', e => {
     }
 
     const delta = y - lastY;
+    try { console.log('[hide-on-scroll] delta=', delta, 'lastY=', lastY, 'y=', y); } catch (e) {}
     if (Math.abs(delta) > THRESHOLD) {
       if (delta > 0 && y > MIN_SCROLL_TO_HIDE) {
         // scrolling down -> hide header and remove reserved padding so content fills screen
         try {
+          try { console.log('[hide-on-scroll] scrolling down — hiding header'); } catch (e) {}
           // first animate out
           header.classList.add('is-hidden');
           header.classList.remove('is-shown');
@@ -465,6 +471,7 @@ modal.addEventListener('click', e => {
       } else {
         // scrolling up -> show header and restore reserved padding
         try {
+          try { console.log('[hide-on-scroll] scrolling up — showing header'); } catch (e) {}
           // restore display first so getBoundingClientRect returns correct height
           header.style.display = '';
           const h = header.getBoundingClientRect().height;
