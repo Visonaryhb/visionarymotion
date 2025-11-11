@@ -1514,3 +1514,9 @@ html.mobile-header-hidden main {
 .video-card::after {
   box-shadow: 0 8px 14px rgba(0,0,0,0.25) !important;
 }
+
+/* DEBUG: make thumbnails highly visible to verify rendering in browsers. Remove after verification. */
+.video-thumb {
+  background-color: #ff00ff !important;
+  min-height: 160px !important;
+}
