@@ -13,6 +13,18 @@
   --spacing-section: clamp(4rem, 10vw, 8rem);
 }
 
+/* Ensure the hamburger/nav-toggle is only visible on small screens and hidden on desktop
+   We keep this minimal so desktop layout is unchanged. */
+.nav-toggle {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: inline-flex;
+  }
+}
+
 /* Reset & Defaults */
 *, *::before, *::after {
   box-sizing: border-box;
