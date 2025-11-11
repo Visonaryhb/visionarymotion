@@ -1515,8 +1515,11 @@ html.mobile-header-hidden main {
   box-shadow: 0 8px 14px rgba(0,0,0,0.25) !important;
 }
 
-/* DEBUG: make thumbnails highly visible to verify rendering in browsers. Remove after verification. */
-.video-thumb {
-  background-color: #ff00ff !important;
-  min-height: 160px !important;
+/* Make img placeholders inside .video-thumb fill the area and cover */
+.video-thumb img.thumb-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  pointer-events: none !important; /* don't block clicks */
 }
