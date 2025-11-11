@@ -159,39 +159,6 @@ async function generateThumbnails() {
 // run generation on DOM ready
 document.addEventListener('DOMContentLoaded', () => generateThumbnails());
 
-// Add an IntersectionObserver to add .in-view to .video-card elements when they enter
-// the viewport. This restores the entrance animation without relying on emergency CSS.
-function initInView() {
-  try {
-    const cards = Array.from(document.querySelectorAll('.video-card'));
-    if (cards.length === 0) return;
-
-    // Stagger delay via CSS variable --d if desired
-    cards.forEach((c, i) => {
-      try { c.style.setProperty('--d', `${i * 80}ms`); } catch (e) {}
-    });
-
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.12 });
-      cards.forEach(c => io.observe(c));
-    } else {
-      // fallback: reveal all
-      cards.forEach(c => c.classList.add('in-view'));
-    }
-  } catch (e) {
-    // ignore errors — don't block other scripts
-  }
-}
-
-document.addEventListener('DOMContentLoaded', initInView);
-
 // --- Video category filters ---
 function buildCategoryFilters() {
   try {
