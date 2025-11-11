@@ -1422,6 +1422,12 @@ html.mobile-header-hidden main {
   transform: translateY(0) scale(1);
 }
 
+/* Emergency override: if JS that adds .in-view doesn't run, ensure cards are visible. */
+.video-card {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 /* subtle hover lift (keeps existing visual treatment) */
 .video-card:hover {
   transform: translateY(-4px);
