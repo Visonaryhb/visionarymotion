@@ -668,7 +668,11 @@ modal.addEventListener('click', e => {
 (function() {
   const header = document.querySelector('.site-header');
   if (!header) return;
-
+  // public-ish state used by other parts of the script to avoid jitter
+  // `window.__vm_navOpen` ist true, wenn die mobile Nav aufgeklappt ist.
+  // Die Scroll-Handler können dies prüfen und temporär keine Änderungen vornehmen,
+  // um Layout-Jitter zu vermeiden.
+  window.__vm_navOpen = false;
   function isMobile() {
     return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
   }
@@ -713,6 +717,13 @@ modal.addEventListener('click', e => {
 
   function update() {
     const y = window.scrollY || window.pageYOffset || 0;
+    // Wenn die mobile Navigation geöffnet ist, vermeiden wir Header-Umschaltungen,
+    // da das Öffnen/Schließen der Nav die Header-Höhe verändert und sonst zu
+    // wiederholten, ruckelnden Updates führen kann.
+    if (window.__vm_navOpen) {
+      ticking = false;
+      return;
+    }
     if (y <= 20) {
       showHeader();
       lastY = y;
@@ -767,6 +778,17 @@ modal.addEventListener('click', e => {
     }
   }
 
+  // expose small API so other parts of the script can re-run/update header state
+  // and query mobile status. This keeps the file modular without large refactors.
+  try {
+    window.__vm_headerUpdate = update;
+    window.__vm_showHeader = showHeader;
+    window.__vm_hideHeader = hideHeader;
+    window.__vm_isMobileHeader = isMobile;
+  } catch (e) {
+    // ignore in very old browsers
+  }
+
   // Initial setup
   computeHeaderHeight();
   if (isMobile()) window.addEventListener('scroll', onScroll, { passive: true });
@@ -791,6 +813,31 @@ document.addEventListener('DOMContentLoaded', () => {
       const isOpen = toggle.classList.toggle('open');
       nav.classList.toggle('is-open', isOpen);
       toggle.setAttribute('aria-expanded', String(isOpen));
+      // reflect state globally so the scroll logic can avoid jitter while nav is open
+      try { window.__vm_navOpen = Boolean(isOpen); } catch (e) { /* ignore */ }
+    });
+
+    // Close nav when any nav link / button is clicked (mobile UX expectation)
+    // this ensures the collapsible menu closes after navigating and that the
+    // header scroll logic resumes correctly.
+    const navItems = nav.querySelectorAll('a, button');
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        // allow normal navigation but close the mobile nav UI
+        try {
+          const wasOpen = Boolean(window.__vm_navOpen);
+          if (wasOpen) {
+            toggle.classList.remove('open');
+            nav.classList.remove('is-open');
+            toggle.setAttribute('aria-expanded', 'false');
+            window.__vm_navOpen = false;
+            // re-run header logic once in the next frame to ensure proper shown/hidden state
+            if (window.__vm_headerUpdate) requestAnimationFrame(window.__vm_headerUpdate);
+          }
+        } catch (err) {
+          // ignore
+        }
+      });
     });
   } catch (e) {
     // ignore
