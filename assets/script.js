@@ -680,59 +680,37 @@ modal.addEventListener('click', e => {
 
   header.classList.add('hide-on-scroll');
 
-  // Compact header: reduce height but keep slogan/brand visible
-  function compactHeader() {
+  // Cache header height and expose via CSS variable. Compute only on load/resize.
+  function computeHeaderHeight() {
     try {
-      header.classList.add('compact');
-      header.classList.remove('is-hidden');
-      header.classList.remove('is-shown');
-      const compactHeight = 56;
-      document.documentElement.style.setProperty('--header-height', compactHeight + 'px');
-      if (isMobile()) document.querySelector('main').style.paddingTop = compactHeight + 'px';
-      // ensure visible
-      header.style.display = '';
-      // ensure slogan remains visible in compact state
-      try {
-        const slogan = header.querySelector('.brand-slogan');
-        if (slogan) {
-          slogan.style.display = 'block';
-          slogan.style.opacity = '0.9';
-          slogan.style.fontSize = '0.85rem';
-        }
-      } catch (e) {}
-    } catch (e) {}
+      const h = header.getBoundingClientRect().height || 0;
+      document.documentElement.style.setProperty('--header-height', h + 'px');
+    } catch (e) {
+      // fallback
+      document.documentElement.style.setProperty('--header-height', '120px');
+    }
+  }
+
+  // Compact header: toggle classes only (avoid layout reads/writes here)
+  function compactHeader() {
+    header.classList.add('compact');
+    header.classList.remove('is-hidden');
+    header.classList.remove('is-shown');
   }
 
   function showHeader() {
-    try {
-      header.classList.remove('compact');
-      header.style.display = '';
-      const h = header.getBoundingClientRect().height || 120;
-      document.documentElement.style.setProperty('--header-height', h + 'px');
-      if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
-      header.classList.remove('is-hidden');
-      header.classList.add('is-shown');
-      document.documentElement.classList.remove('mobile-header-hidden');
-      // Force slogan visible (some browsers/webviews may apply earlier CSS rules)
-      try {
-        const slogan = header.querySelector('.brand-slogan');
-        if (slogan) {
-          slogan.style.display = 'block';
-          slogan.style.opacity = '1';
-          slogan.style.fontSize = '1rem';
-        }
-      } catch (e) {}
-    } catch (e) {}
+    header.classList.remove('compact');
+    header.classList.remove('is-hidden');
+    header.classList.add('is-shown');
+    // do not measure layout here — computeHeaderHeight() runs on resize/load
+    document.documentElement.classList.remove('mobile-header-hidden');
   }
 
   function hideHeader() {
-    try {
-      header.classList.add('is-hidden');
-      header.classList.remove('is-shown');
-      // when hidden, ensure main padding doesn't reserve header space
-      document.documentElement.style.setProperty('--header-height', '0px');
-      if (isMobile()) try { document.querySelector('main').style.paddingTop = '0px'; } catch (e) {}
-    } catch (e) {}
+    header.classList.add('is-hidden');
+    header.classList.remove('is-shown');
+    // when hidden, clear header height so content can flow under
+    document.documentElement.style.setProperty('--header-height', '0px');
   }
 
   function update() {
@@ -766,7 +744,7 @@ modal.addEventListener('click', e => {
     }
   }
 
-  // Touch fallback for webviews
+  // Touch fallback for webviews — keep minimal and avoid layout changes
   let touchStartY = null;
   function onTouchStart(e) { if (!isMobile()) return; touchStartY = (e.touches && e.touches[0] && e.touches[0].clientY) || null; }
   function onTouchMove(e) {
@@ -779,6 +757,7 @@ modal.addEventListener('click', e => {
   function onTouchEnd() { touchStartY = null; }
 
   function handleResize() {
+    computeHeaderHeight();
     if (isMobile()) {
       window.addEventListener('scroll', onScroll, { passive: true });
     } else {
@@ -786,21 +765,17 @@ modal.addEventListener('click', e => {
       header.classList.remove('is-hidden');
       header.classList.remove('is-shown');
       header.classList.remove('hide-on-scroll');
-      try { document.querySelector('main').style.paddingTop = ''; } catch (e) {}
+      document.documentElement.style.removeProperty('--header-height');
     }
   }
 
+  // Initial setup
+  computeHeaderHeight();
   if (isMobile()) window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', handleResize);
-  window.addEventListener('load', () => { showHeader(); });
+  window.addEventListener('load', () => { computeHeaderHeight(); showHeader(); });
 
-  window.addEventListener('resize', () => {
-    try {
-      const h = header.getBoundingClientRect().height;
-      document.documentElement.style.setProperty('--header-height', h + 'px');
-      if (isMobile()) document.querySelector('main').style.paddingTop = h + 'px';
-    } catch (e) {}
-  });
+  window.addEventListener('resize', () => { computeHeaderHeight(); });
 
   window.addEventListener('touchstart', onTouchStart, { passive: true });
   window.addEventListener('touchmove', onTouchMove, { passive: true });
