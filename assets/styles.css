@@ -1578,9 +1578,9 @@ html.mobile-header-hidden main {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
-    max-height: calc((var(--thumb-height-desktop) + 1rem) * 3 + 2rem);
-    overflow-y: auto;
-    padding-right: 0.5rem; /* room for scrollbar */
+    /* show exactly 3 rows on desktop and hide any overflow (no scrollbar) */
+    max-height: calc((var(--thumb-height-desktop) + 1rem) * 3);
+    overflow: hidden; /* hide extra items */
   }
 
   .video-thumb {
