@@ -709,8 +709,6 @@ modal.addEventListener('click', e => {
   function hideHeader() {
     header.classList.add('is-hidden');
     header.classList.remove('is-shown');
-    // when hidden, clear header height so content can flow under
-    document.documentElement.style.setProperty('--header-height', '0px');
   }
 
   function update() {
