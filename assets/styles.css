@@ -522,7 +522,7 @@ h1, h2, h3, h4 {
 .video-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  gap: 1.25rem;
 }
 
 .video-filters {
@@ -561,6 +561,41 @@ h1, h2, h3, h4 {
   .video-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Constrain thumbnails to max 3 columns x 3 rows on desktop-sized viewports */
+@media (min-width: 1024px) {
+  :root { --thumb-height-desktop: 160px; }
+  .video-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    /* limit visible area to 3 rows; allow scrolling if more videos exist */
+    max-height: calc((var(--thumb-height-desktop) + 1rem) * 3 + 2rem);
+    overflow-y: auto;
+    padding-right: 0.5rem; /* space for scrollbar */
+  }
+
+  .video-thumb {
+    height: var(--thumb-height-desktop) !important;
+    min-height: var(--thumb-height-desktop) !important;
+    aspect-ratio: unset !important; /* use fixed height for consistent rows */
+    background-size: cover !important;
+  }
+
+  .video-card {
+    padding: 0.4rem;
+  }
+
+  .video-card .play-icon {
+    width: 48px !important;
+    height: 48px !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root { --thumb-height-tablet: 140px; }
+  .video-thumb { height: var(--thumb-height-tablet) !important; min-height: var(--thumb-height-tablet) !important; aspect-ratio: unset !important; }
+  .video-card .play-icon { width: 56px !important; height: 56px !important; }
 }
 
 .video-card {
