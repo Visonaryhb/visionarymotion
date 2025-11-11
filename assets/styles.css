@@ -1491,3 +1491,26 @@ html.mobile-header-hidden main {
 @media (prefers-reduced-motion: reduce) {
   .video-card, .video-card.in-view { transition: none; transform: none; }
 }
+
+/* Emergency fallback: force visible thumbnail backgrounds and card borders.
+   This uses high-specificity and !important to override possible external overrides
+   or cached/older CSS that causes white/blank previews. Safe, minimal and
+   non-destructive — will be removed once root cause is confirmed fixed. */
+.video-card, .video-thumb {
+  background-color: #000 !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08) !important;
+}
+.video-thumb {
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  min-height: 120px !important;
+}
+.video-thumb .play-icon {
+  display: inline-grid !important;
+  z-index: 6 !important;
+}
+.video-card::after {
+  box-shadow: 0 8px 14px rgba(0,0,0,0.25) !important;
+}
