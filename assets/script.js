@@ -49,35 +49,72 @@ async function generateThumbnails() {
     const explicitThumb = (card.dataset && card.dataset.thumb) ? card.dataset.thumb.trim() : null;
     if (explicitThumb) {
       // ensure play icon exists (early, so it's visible during load)
+      // Ensure a visible <img> fallback exists inside the thumb (more robust than only
+      // relying on background-image). This helps when inline styles are stripped or
+      // background-image loading is blocked/cached.
+      let imgEl = thumbEl.querySelector('img.thumb-img');
+      if (!imgEl) {
+        imgEl = document.createElement('img');
+        imgEl.className = 'thumb-img';
+        imgEl.alt = card.getAttribute('aria-label') || '';
+        imgEl.setAttribute('aria-hidden', 'true');
+        // ensure the image fills the container but doesn't block the play icon
+        imgEl.style.width = '100%';
+        imgEl.style.height = '100%';
+        imgEl.style.objectFit = 'cover';
+        imgEl.style.display = 'block';
+        imgEl.style.pointerEvents = 'none';
+        thumbEl.appendChild(imgEl);
+      }
+
+      // ensure play icon exists (early, so it's visible during load)
       if (!card.querySelector('.play-icon')) {
         const play = document.createElement('div');
         play.className = 'play-icon';
+        play.setAttribute('aria-hidden', 'true');
+        // inline defensive styles so it stays above the image
+        play.style.position = 'absolute';
+        play.style.zIndex = '6';
+        play.style.pointerEvents = 'none';
         play.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>';
         thumbEl.appendChild(play);
       }
 
-      // Try to preload the explicit thumb so we can detect loading errors
+      // Try to preload the explicit thumb so we can detect loading errors and also
+      // set the <img> fallback src. If loading fails, fall back to YouTube thumbnail
+      // or a local placeholder.
       try {
-        const img = new Image();
-        img.onload = () => {
+        const testImg = new Image();
+        testImg.onload = () => {
+          // set both background-image and the <img> fallback for maximal compatibility
           thumbEl.style.backgroundImage = `url('${explicitThumb}')`;
+          imgEl.src = explicitThumb;
           thumbEl.classList.remove('loading');
         };
-        img.onerror = () => {
-          // fallback to YouTube thumbnail if video is a YouTube URL
+        testImg.onerror = () => {
           const ytIdFb = extractYouTubeID(card.dataset.video);
           if (ytIdFb) {
-            thumbEl.style.backgroundImage = `url('https://img.youtube.com/vi/${ytIdFb}/hqdefault.jpg')`;
+            const ytUrl = `https://img.youtube.com/vi/${ytIdFb}/hqdefault.jpg`;
+            thumbEl.style.backgroundImage = `url('${ytUrl}')`;
+            imgEl.src = ytUrl;
+          } else {
+            // final fallback to a local tiny placeholder thumbnail if available
+            imgEl.src = 'assets/thumbs/screenshot_thumb.jpg';
+            thumbEl.style.backgroundImage = `url('assets/thumbs/screenshot_thumb.jpg')`;
           }
           thumbEl.classList.remove('loading');
         };
         // start loading (may be cached)
-        img.src = explicitThumb;
+        testImg.src = explicitThumb;
       } catch (e) {
-        // if anything goes wrong, try YouTube id fallback and clear loading
         const ytIdFb = extractYouTubeID(card.dataset.video);
         if (ytIdFb) {
-          thumbEl.style.backgroundImage = `url('https://img.youtube.com/vi/${ytIdFb}/hqdefault.jpg')`;
+          const ytUrl = `https://img.youtube.com/vi/${ytIdFb}/hqdefault.jpg`;
+          thumbEl.style.backgroundImage = `url('${ytUrl}')`;
+          if (imgEl) imgEl.src = ytUrl;
+        } else if (imgEl) {
+          imgEl.src = 'assets/thumbs/screenshot_thumb.jpg';
+          thumbEl.style.backgroundImage = `url('assets/thumbs/screenshot_thumb.jpg')`;
         }
         thumbEl.classList.remove('loading');
       }
@@ -102,7 +139,18 @@ async function generateThumbnails() {
     const ytId = extractYouTubeID(videoSrc);
     if (ytId) {
       // Use YouTube thumbnail
-      thumbEl.style.backgroundImage = `url('https://img.youtube.com/vi/${ytId}/hqdefault.jpg')`;
+      const ytUrl = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+      thumbEl.style.backgroundImage = `url('${ytUrl}')`;
+      // ensure <img> fallback exists and is set
+      const imgEl = thumbEl.querySelector('img.thumb-img') || (() => {
+        const i = document.createElement('img');
+        i.className = 'thumb-img';
+        i.setAttribute('aria-hidden', 'true');
+        i.style.width = '100%'; i.style.height = '100%'; i.style.objectFit = 'cover'; i.style.pointerEvents = 'none';
+        thumbEl.appendChild(i);
+        return i;
+      })();
+      imgEl.src = ytUrl;
       thumbEl.classList.remove('loading');
       return;
     }
@@ -139,6 +187,16 @@ async function generateThumbnails() {
             ctx.drawImage(v, 0, 0, canvas.width / dpr, canvas.height / dpr);
             const dataURL = canvas.toDataURL('image/jpeg', 0.92);
             thumbEl.style.backgroundImage = `url('${dataURL}')`;
+            // also set fallback image element if present or create one
+            const existingImg = thumbEl.querySelector('img.thumb-img') || (() => {
+              const i = document.createElement('img');
+              i.className = 'thumb-img';
+              i.setAttribute('aria-hidden', 'true');
+              i.style.width = '100%'; i.style.height = '100%'; i.style.objectFit = 'cover'; i.style.pointerEvents = 'none';
+              thumbEl.appendChild(i);
+              return i;
+            })();
+            existingImg.src = dataURL;
             clearTimeout(timeout);
             v.src = '';
             thumbEl.classList.remove('loading');
