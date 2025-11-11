@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
   <!-- cache-bust query param to force browsers to load latest CSS -->
   <!-- cache-bust query param to force browsers to load latest CSS -->
-  <link rel="stylesheet" href="assets/styles.css?v=5">
+  <link rel="stylesheet" href="assets/styles.css?v=14">
 </head>
 <body>
   <a class="skip-link" href="#hero">Zum Inhalt springen</a>
@@ -89,27 +89,40 @@
 
         <div class="video-filters" id="video-filters" aria-label="Video Kategorien"></div>
         <div class="video-grid" id="video-grid">
+          <!-- Erstes Video mit eigenem Thumbnail -->
           <button class="video-card" data-category="Gastronomie" data-video="https://www.youtube.com/embed/OddGEAatV1Y?rel=0&modestbranding=1&playsinline=1" data-thumb="assets/thumbs/antepli.jpg" aria-label="Video ansehen">
               <div class="video-thumb" aria-hidden="true">
-                <img class="thumb-img" src="assets/thumbs/antepli.jpg" alt="Antepli Preview" aria-hidden="true" />
+                <img class="thumb-img" src="assets/thumbs/antepli.jpg" alt="Antepli Restaurant Preview" aria-hidden="true" />
                 <div class="play-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
                 </div>
               </div>
           </button>
 
-          <button class="video-card" data-category="Gastronomie" data-video="https://www.youtube.com/embed/0H_bSA9Nx7k?rel=0&modestbranding=1&playsinline=1" data-thumb="assets/thumbs/screenshot_fill_v4.jpg?v=4" aria-label="Video ansehen">
+          <!-- Zweites Video mit YouTube-Thumbnail -->
+          <button class="video-card" data-category="Gastronomie" data-video="https://www.youtube.com/embed/0H_bSA9Nx7k?rel=0&modestbranding=1&playsinline=1" data-thumb="https://img.youtube.com/vi/0H_bSA9Nx7k/hqdefault.jpg" aria-label="Video ansehen">
               <div class="video-thumb" aria-hidden="true">
-                <img class="thumb-img" src="assets/thumbs/screenshot_fill_v4.jpg?v=4" alt="Preview" aria-hidden="true" />
+                <img class="thumb-img" src="https://img.youtube.com/vi/0H_bSA9Nx7k/hqdefault.jpg" alt="Gastronomie Preview" aria-hidden="true" />
                 <div class="play-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
                 </div>
               </div>
           </button>
 
-          <button class="video-card" data-category="Gastronomie" data-video="https://www.youtube.com/embed/lHtrOvWEiT8?rel=0&modestbranding=1&playsinline=1" data-thumb="assets/thumbs/screenshot_fill_v4.jpg?v=4" aria-label="Video ansehen">
+          <!-- Drittes Video - Gastronomie (für zusammenhängende Reihe) -->
+          <button class="video-card" data-category="Gastronomie" data-video="https://www.youtube.com/embed/lHtrOvWEiT8?rel=0&modestbranding=1&playsinline=1" data-thumb="https://img.youtube.com/vi/lHtrOvWEiT8/hqdefault.jpg" aria-label="Video ansehen">
               <div class="video-thumb" aria-hidden="true">
-                <img class="thumb-img" src="assets/thumbs/screenshot_fill_v4.jpg?v=4" alt="Preview" aria-hidden="true" />
+                <img class="thumb-img" src="https://img.youtube.com/vi/lHtrOvWEiT8/hqdefault.jpg" alt="Gastronomie Preview" aria-hidden="true" />
+                <div class="play-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
+                </div>
+              </div>
+          </button>
+
+          <!-- Ab hier YouTube-Thumbnails automatisch -->
+          <button class="video-card" data-category="Retail" data-video="https://www.youtube.com/embed/7eOfgWIoem8?rel=0&modestbranding=1&playsinline=1" data-thumb="https://img.youtube.com/vi/7eOfgWIoem8/hqdefault.jpg" aria-label="Video ansehen">
+              <div class="video-thumb" aria-hidden="true">
+                <img class="thumb-img" src="https://img.youtube.com/vi/7eOfgWIoem8/hqdefault.jpg" alt="Retail Preview" aria-hidden="true" />
                 <div class="play-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
                 </div>
@@ -118,7 +131,7 @@
 
           <button class="video-card" data-category="Event" data-video="https://www.youtube.com/embed/7aGVaTCovTQ?rel=0&modestbranding=1&playsinline=1" data-thumb="https://img.youtube.com/vi/7aGVaTCovTQ/hqdefault.jpg" aria-label="Video ansehen">
               <div class="video-thumb" aria-hidden="true">
-                <img class="thumb-img" src="https://img.youtube.com/vi/7aGVaTCovTQ/hqdefault.jpg" alt="Preview" aria-hidden="true" />
+                <img class="thumb-img" src="https://img.youtube.com/vi/7aGVaTCovTQ/hqdefault.jpg" alt="Event Preview" aria-hidden="true" />
                 <div class="play-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
                 </div>
@@ -127,16 +140,7 @@
 
           <button class="video-card" data-category="Event" data-video="https://www.youtube.com/embed/_ik6Ab4hL_w?rel=0&modestbranding=1&playsinline=1" data-thumb="https://img.youtube.com/vi/_ik6Ab4hL_w/hqdefault.jpg" aria-label="Video ansehen">
               <div class="video-thumb" aria-hidden="true">
-                <img class="thumb-img" src="https://img.youtube.com/vi/_ik6Ab4hL_w/hqdefault.jpg" alt="Preview" aria-hidden="true" />
-                <div class="play-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
-                </div>
-              </div>
-          </button>
-
-          <button class="video-card" data-category="Retail" data-video="https://www.youtube.com/embed/7eOfgWIoem8?rel=0&modestbranding=1&playsinline=1" data-thumb="https://img.youtube.com/vi/7eOfgWIoem8/hqdefault.jpg" aria-label="Video ansehen">
-              <div class="video-thumb" aria-hidden="true">
-                <img class="thumb-img" src="https://img.youtube.com/vi/7eOfgWIoem8/hqdefault.jpg" alt="Preview" aria-hidden="true" />
+                <img class="thumb-img" src="https://img.youtube.com/vi/_ik6Ab4hL_w/hqdefault.jpg" alt="Event Preview" aria-hidden="true" />
                 <div class="play-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
                 </div>
@@ -145,7 +149,7 @@
 
           <button class="video-card" data-category="Automotive" data-video="https://www.youtube.com/embed/rnbxD8HCZtg?rel=0&modestbranding=1&playsinline=1" data-thumb="https://img.youtube.com/vi/rnbxD8HCZtg/hqdefault.jpg" aria-label="Video ansehen">
               <div class="video-thumb" aria-hidden="true">
-                <img class="thumb-img" src="https://img.youtube.com/vi/rnbxD8HCZtg/hqdefault.jpg" alt="Preview" aria-hidden="true" />
+                <img class="thumb-img" src="https://img.youtube.com/vi/rnbxD8HCZtg/hqdefault.jpg" alt="Automotive Preview" aria-hidden="true" />
                 <div class="play-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
                 </div>
@@ -154,7 +158,7 @@
 
           <button class="video-card" data-category="Hochzeit" data-video="https://www.youtube.com/embed/Aa1V8SDPO_w?rel=0&modestbranding=1&playsinline=1" data-thumb="https://img.youtube.com/vi/Aa1V8SDPO_w/hqdefault.jpg" aria-label="Video ansehen">
               <div class="video-thumb" aria-hidden="true">
-                <img class="thumb-img" src="https://img.youtube.com/vi/Aa1V8SDPO_w/hqdefault.jpg" alt="Preview" aria-hidden="true" />
+                <img class="thumb-img" src="https://img.youtube.com/vi/Aa1V8SDPO_w/hqdefault.jpg" alt="Hochzeit Preview" aria-hidden="true" />
                 <div class="play-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
                 </div>
@@ -163,6 +167,7 @@
 
           <button class="video-card" data-category="Hochzeit" data-video="https://www.youtube.com/embed/WKK0XihtJuo?rel=0&modestbranding=1&playsinline=1" data-thumb="https://img.youtube.com/vi/WKK0XihtJuo/hqdefault.jpg" aria-label="Video ansehen">
             <div class="video-thumb" aria-hidden="true">
+              <img class="thumb-img" src="https://img.youtube.com/vi/WKK0XihtJuo/hqdefault.jpg" alt="Hochzeit Preview" aria-hidden="true" />
               <div class="play-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
               </div>
@@ -283,6 +288,6 @@
     </div>
   </div>
 
-  <script src="assets/script.js" defer></script>
+  <script src="assets/script.js?v=14" defer></script>
 </body>
 </html>
