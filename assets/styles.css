@@ -1571,6 +1571,28 @@ html.mobile-header-hidden main {
   pointer-events: none; /* don't block clicks */
 }
 
+/* Mobile-friendly tweaks to ensure thumbnails and play icon are tappable and visible */
+@media (max-width: 768px) {
+  .video-thumb img.thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Keep play icon clearly above the image on mobile (some webviews change stacking) */
+  .video-thumb .play-icon,
+  .video-card .play-icon {
+    z-index: 10 !important;
+    pointer-events: none; /* tapping the card should open modal, not the icon itself */
+  }
+
+  /* Slightly larger tap area on mobile for the whole card */
+  .video-card {
+    padding: 0.5rem !important;
+  }
+}
+
 /* Explicit desktop rule: enforce 3 columns x max 3 rows visible (scroll if more) */
 @media (min-width: 1024px) {
   :root { --thumb-height-desktop: 160px; }
