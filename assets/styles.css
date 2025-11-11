@@ -1,6 +1,6 @@
 /* Base */
 :root {
-  --color-primary: #C4945E;  /* Logo-Farbe */
+  --color-primary: #B48A57;  /* Updated Logo-Farbe (goldfarben) */
   --color-accent: #ff6b6b;
   --color-accent-2: #8b5cf6;
   --color-text: #1a1a1a;
@@ -518,97 +518,127 @@ h1, h2, h3, h4 {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Video Grid */
+/* Video Grid - Professional Layout */
 .video-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
+  gap: 1.5rem;
+  max-height: none; /* Remove height restriction for better layout */
+  overflow: visible;
+  padding: 0;
 }
 
+/* Filter Buttons */
 .video-filters {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .filter-btn {
-  background: none;
-  border: 1px solid rgba(0,0,0,0.08);
-  padding: 0.45rem 0.75rem;
-  border-radius: 6px;
+  background: rgba(180, 138, 87, 0.1);
+  border: 2px solid rgba(180, 138, 87, 0.2);
+  color: var(--color-primary);
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
   cursor: pointer;
   font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
 }
+
 .filter-btn:hover,
 .filter-btn:focus {
+  background: rgba(180, 138, 87, 0.2);
   border-color: var(--color-primary);
   outline: none;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(180, 138, 87, 0.3);
 }
+
 .filter-btn.active {
   background: var(--color-primary);
   color: white;
-  border-color: transparent;
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(180, 138, 87, 0.4);
 }
 
-@media (max-width: 1200px) {
-  :root { --thumb-height-desktop: 160px; }
-
-  /* desktop: three columns and limit visible area to three rows (scroll if more) */
+/* Desktop Layout - 3x3 Grid */
+@media (min-width: 769px) {
   .video-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    max-height: calc((var(--thumb-height-desktop) + 1rem) * 3 + 2rem);
+    gap: 1.5rem;
+    max-height: calc(260px * 3 + 3rem); /* 3 rows visible */
     overflow-y: auto;
-    padding-right: 0.5rem; /* space for scrollbar */
+    padding-right: 0.5rem;
   }
-
-  .video-card {
-    padding: 0.4rem;
-  }
-
+  
   .video-thumb {
-    height: var(--thumb-height-desktop);
-    min-height: var(--thumb-height-desktop);
-    aspect-ratio: unset;
-    background-size: cover;
+    height: 260px;
+    min-height: 260px;
   }
-
+  
   .video-card .play-icon {
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
   }
-  :root { --thumb-height-desktop: 160px; }
-  .video-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    /* limit visible area to 3 rows; allow scrolling if more videos exist */
-    max-height: calc((var(--thumb-height-desktop) + 1rem) * 3 + 2rem);
-    overflow-y: auto;
-    padding-right: 0.5rem; /* space for scrollbar */
-  }
-
-  .video-thumb {
-    height: var(--thumb-height-desktop) !important;
-    min-height: var(--thumb-height-desktop) !important;
-    aspect-ratio: unset !important; /* use fixed height for consistent rows */
-    background-size: cover !important;
-  }
-
-  .video-card {
-    padding: 0.4rem;
-  }
-
-  .video-card .play-icon {
-    width: 48px !important;
-    height: 48px !important;
+  
+  .play-icon svg { 
+    width: 24px;
+    height: 24px;
   }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
-  :root { --thumb-height-tablet: 140px; }
-  .video-thumb { height: var(--thumb-height-tablet) !important; min-height: var(--thumb-height-tablet) !important; aspect-ratio: unset !important; }
-  .video-card .play-icon { width: 56px !important; height: 56px !important; }
+/* Tablet Layout */
+@media (min-width: 481px) and (max-width: 768px) {
+  .video-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+  
+  .video-thumb {
+    height: 200px;
+    min-height: 200px;
+  }
+  
+  .video-card .play-icon {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* Mobile Layout - Single Column */
+@media (max-width: 480px) {
+  .video-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+  }
+  
+  .video-thumb {
+    height: 200px;
+    min-height: 200px;
+  }
+  
+  .video-card .play-icon {
+    width: 52px;
+    height: 52px;
+  }
+  
+  .video-filters {
+    justify-content: flex-start;
+    margin-bottom: 1.5rem;
+  }
+  
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
 }
 
 .video-card {
@@ -619,33 +649,46 @@ h1, h2, h3, h4 {
   text-align: left;
   width: 100%;
   padding: 0;
+  transition: transform 0.3s ease;
 }
 
-/* Kategorie-Badge auf Thumbnails (nutzt vorhandenes data-category) */
+/* Elegant hover effect - scale up with shadow */
+.video-card:hover {
+  transform: scale(1.03);
+}
+
+.video-card:hover .video-thumb {
+  box-shadow: 0 20px 40px rgba(180, 138, 87, 0.3);
+}
+
+/* Kategorie-Badge auf Thumbnails - Durchsichtig und elegant */
 .video-card::after {
   content: attr(data-category);
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(0,0,0,0.7);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px 10px;
-  border-radius: 999px;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
-  z-index: 2;
-  pointer-events: none; /* don't block clicks on the card */
+  top: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+  pointer-events: none;
   white-space: nowrap;
-  text-transform: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 @media (max-width: 480px) {
   .video-card::after {
-    top: 8px;
-    left: 8px;
-    font-size: 11px;
-    padding: 5px 8px;
+    top: 10px;
+    left: 10px;
+    font-size: 10px;
+    padding: 5px 10px;
   }
 }
 
@@ -653,16 +696,62 @@ h1, h2, h3, h4 {
   aspect-ratio: 16/9;
   background-size: cover;
   background-position: center;
-  border-radius: 0.75rem;
-  margin-bottom: 1.25rem;
+  border-radius: 12px;
+  margin-bottom: 0;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #000;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  transition: all 0.4s ease;
+}
+
+.video-thumb .thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+/* Elegant Play Button - Visionary Motion Style */
+.video-card .play-icon {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, 
+    rgba(180, 138, 87, 0.95) 0%, 
+    rgba(180, 138, 87, 0.85) 100%
+  );
+  display: inline-grid;
+  place-items: center;
+  box-shadow: 
+    0 8px 20px rgba(180, 138, 87, 0.3),
+    0 0 0 3px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transform: translateY(0);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.video-card:hover .play-icon {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, 
+    rgba(180, 138, 87, 1) 0%, 
+    rgba(180, 138, 87, 0.9) 100%
+  );
+  box-shadow: 
+    0 12px 30px rgba(180, 138, 87, 0.5),
+    0 0 0 4px rgba(255, 255, 255, 0.3);
+}
+
+.play-icon svg { 
+  width: 22px;
+  height: 22px;
+  fill: white;
+  margin-left: 2px; /* Slight offset for better visual centering */
 }
 
 /* Preview layer covers the thumb when playing (muted preview) */
@@ -679,13 +768,13 @@ h1, h2, h3, h4 {
 
 .video-card .play-icon { z-index: 5; }
 
-/* Wenn Kategorien als Badges angezeigt werden, sind die alten Unterschriften überflüssig. */
+/* Video info and meta - hidden since we use category badges */
 .video-info {
   display: none !important;
 }
 
 .video-thumb {
-  margin-bottom: 0.75rem; /* weniger Abstand, da die Unterschrift entfernt wird */
+  margin-bottom: 0; /* No spacing needed since info is hidden */
 }
 
 .video-thumb.loading::before {
@@ -715,41 +804,18 @@ h1, h2, h3, h4 {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%);
+  background: linear-gradient(180deg, 
+    rgba(0,0,0,0.1) 0%, 
+    rgba(0,0,0,0.3) 60%,
+    rgba(0,0,0,0.5) 100%
+  );
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
 
-.video-card:hover .video-thumb {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-}
-
+/* Remove the hover darkening effect */
 .video-card:hover .video-thumb::after {
-  opacity: 0.8;
-}
-
-.video-card .play-icon {
-  position: absolute;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
-  display: inline-grid;
-  place-items: center;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-  transform: translateY(0);
-  transition: transform 0.25s ease, opacity 0.2s ease;
-}
-
-.video-card:hover .play-icon {
-  transform: translateY(-6px) scale(1.03);
-}
-
-.play-icon svg { 
-  width: 28px;
-  height: 28px;
-  fill: var(--color-primary);
+  opacity: 1; /* Keep same opacity on hover */
 }
 
 .video-info h4 {
@@ -1459,107 +1525,131 @@ html.mobile-header-hidden main {
   }
 }
 
-/* Entrance animation for video cards */
+/* Video cards should be visible by default */
 .video-card {
-  opacity: 0;
-  transform: translateY(18px) scale(0.995);
-  transition: opacity 560ms cubic-bezier(.2,.9,.3,1) var(--d, 0ms), transform 560ms cubic-bezier(.2,.9,.3,1) var(--d, 0ms);
-}
-.video-card.in-view {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: none;
 }
 
-/* Removed emergency overrides to restore normal animation and stacking.
-   Entrance animations are controlled via .video-card.in-view and modal/backdrop
-   should remain available. */
-
-/* subtle hover lift (keeps existing visual treatment) */
-.video-card:hover {
-  transform: translateY(-4px);
+/* Fallback player when embedding fails */
+.video-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
 }
 
-/* Enhanced visual cards: border, stronger shadow and hover scale for clearer previews */
-.video-card {
-  display: block; /* ensure block-level for consistent padding */
-  background: #fff;
-  border-radius: 0.75rem;
-  padding: 0.5rem;
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-  transition: transform 220ms ease, box-shadow 220ms ease, box-shadow 220ms ease;
-}
-
-.video-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.14);
-}
-
-.video-thumb {
-  border-radius: 0.5rem; /* slightly tighter inside the card */
+.fallback-content {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(180, 138, 87, 0.3);
 }
 
-/* Slightly polish the play icon so it stands out on the card */
-.video-card .play-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
-  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
-  display: inline-grid;
-  place-items: center;
+.fallback-content img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.8);
+  transition: filter 0.3s ease;
 }
 
-@media (max-width: 480px) {
-  .video-card { padding: 0.35rem; }
-  .video-card .play-icon { width: 52px; height: 52px; }
+.fallback-content:hover img {
+  filter: brightness(0.6);
 }
 
-/* extra hover polish: subtle scale and color wash on the thumb */
-.video-card:hover .video-thumb {
-  transform: scale(1.02) translateY(-6px);
-}
-.video-card .video-thumb::before {
-  transition: opacity 220ms ease;
-}
-.video-card:hover .video-thumb::before {
-  opacity: 0.08; /* slightly stronger wash on hover */
-}
-
-/* Team names styling (no photo) */
-.team-hero .team-names {
-  display: inline-block;
+.fallback-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(180, 138, 87, 0.1) 50%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  color: white;
   text-align: center;
-  max-width: 480px;
-}
-.team-hero .team-name {
-  font-size: 1.05rem;
-  letter-spacing: 0.01em;
-  color: var(--color-text);
-  margin: 0.3rem 0;
+  transition: background 0.3s ease;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .video-card, .video-card.in-view { transition: none; transform: none; }
+.fallback-overlay:hover {
+  background: linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(180, 138, 87, 0.2) 50%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
 }
 
-/* Keep sensible thumbnail defaults without !important overrides. */
-.video-card, .video-thumb {
-  background-color: transparent;
+.fallback-play-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #D4A853 100%);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(180, 138, 87, 0.4);
+  color: white;
 }
-.video-thumb {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  min-height: 120px;
+
+.fallback-play-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(180, 138, 87, 0.6);
+  border-color: rgba(255, 255, 255, 0.4);
 }
-.video-thumb .play-icon {
-  display: inline-grid;
-  z-index: 6;
+
+.fallback-play-btn svg {
+  width: 28px;
+  height: 28px;
+  margin-left: 3px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
-.video-card::after {
-  box-shadow: 0 8px 14px rgba(0,0,0,0.25);
+
+.fallback-text {
+  max-width: 300px;
+  margin: 0 1rem;
+}
+
+.fallback-text p {
+  margin: 0.5rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.fallback-text strong {
+  color: var(--color-primary);
+  font-size: 1.1em;
+}
+
+@media (max-width: 768px) {
+  .fallback-play-btn {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1rem;
+  }
+  
+  .fallback-play-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .fallback-text {
+    font-size: 0.9em;
+  }
 }
 
 /* Make img placeholders inside .video-thumb fill the area and cover */

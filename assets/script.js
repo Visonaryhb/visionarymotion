@@ -35,8 +35,11 @@ function extractYouTubeID(url) {
 
 // Generate thumbnail images from videos when no poster provided
 async function generateThumbnails() {
+  console.log('generateThumbnails called');
   // query the cards at runtime to ensure any DOM reordering is respected
   const videoCards = document.querySelectorAll('.video-card');
+  console.log('Found video cards:', videoCards.length);
+  
   videoCards.forEach(card => {
     const thumbEl = card.querySelector('.video-thumb');
     if (!thumbEl) return;
@@ -274,7 +277,9 @@ function applyFilter(category, btn) {
 
 // initialize filters on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM loaded, initializing...');
   buildCategoryFilters();
+  setupVideoCardListeners();
 });
 
 // Modal handling
@@ -353,7 +358,7 @@ async function createHtml5Video(videoSrc) {
   });
 }
 
-// Create a YouTube iframe (autoplay disabled by default; we set autoplay when inserting)
+// Create a YouTube iframe with Error 153 detection
 function createYouTubeIframe(ytId) {
   const iframe = document.createElement('iframe');
   iframe.width = '100%';
@@ -361,8 +366,170 @@ function createYouTubeIframe(ytId) {
   iframe.style.border = '0';
   iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
   iframe.allowFullscreen = true;
-  iframe.src = `https://www.youtube.com/embed/${ytId}?rel=0&showinfo=0&modestbranding=1`;
+  
+  // Standard YouTube embed URL
+  iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`;
+  
+  console.log('Creating YouTube iframe with URL:', iframe.src);
+  
+  // Error 153 Detection und automatischer Fallback
+  let errorDetected = false;
+  
+  // Timeout für Error 153 Detection (YouTube lädt normalerweise unter 3 Sekunden)
+  const errorTimeout = setTimeout(() => {
+    if (!errorDetected) {
+      console.log('Possible Error 153 detected, switching to fallback player');
+      errorDetected = true;
+      showEmbeddedFallbackPlayer(ytId);
+    }
+  }, 4000);
+  
+  // Erfolgreiche Ladung
+  iframe.addEventListener('load', () => {
+    console.log('YouTube iframe loaded successfully');
+    clearTimeout(errorTimeout);
+  });
+  
+  // Direkter Error Handler
+  iframe.addEventListener('error', () => {
+    console.log('YouTube iframe error detected');
+    clearTimeout(errorTimeout);
+    if (!errorDetected) {
+      errorDetected = true;
+      showEmbeddedFallbackPlayer(ytId);
+    }
+  });
+  
   return iframe;
+}
+
+// Embedded Fallback Player (bleibt auf der Website)
+function showEmbeddedFallbackPlayer(ytId) {
+  const fallbackContainer = document.createElement('div');
+  fallbackContainer.className = 'embedded-fallback-player';
+  fallbackContainer.innerHTML = `
+    <div style="
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    ">
+      <!-- Video Thumbnail -->
+      <div style="
+        position: absolute;
+        inset: 0;
+        background: url('https://img.youtube.com/vi/${ytId}/maxresdefault.jpg') center/cover;
+        filter: brightness(0.6);
+      "></div>
+      
+      <!-- Content Overlay -->
+      <div style="
+        position: relative;
+        z-index: 10;
+        text-align: center;
+        color: white;
+        padding: 2rem;
+      ">
+        <!-- Play Button -->
+        <button onclick="openYouTubeVideo('${ytId}')" style="
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #B48A57 0%, #D4A853 100%);
+          border: 3px solid rgba(255,255,255,0.4);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+          box-shadow: 0 8px 25px rgba(180,138,87,0.5);
+          margin: 0 auto 1.5rem auto;
+        " onmouseenter="this.style.transform='scale(1.1)'" 
+           onmouseleave="this.style.transform='scale(1)'">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="white" style="margin-left: 3px;">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </button>
+        
+        <!-- Info Text -->
+        <div style="max-width: 400px; margin: 0 auto;">
+          <h3 style="
+            margin: 0 0 0.5rem 0;
+            font-size: 1.3rem;
+            color: #B48A57;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+          ">
+            Eingebettete Wiedergabe nicht verfügbar
+          </h3>
+          <p style="
+            margin: 0 0 1rem 0;
+            font-size: 1rem;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            line-height: 1.4;
+          ">
+            Dieses Video kann aufgrund von YouTube-Richtlinien nicht direkt eingebettet werden.
+          </p>
+          <p style="
+            margin: 0;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+          ">
+            Klicken Sie den Play-Button, um es auf YouTube anzusehen.
+          </p>
+        </div>
+      </div>
+      
+      <!-- YouTube Logo -->
+      <div style="
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        color: rgba(255,255,255,0.6);
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      ">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+        <span>YouTube</span>
+      </div>
+    </div>
+  `;
+  
+  // Ersetze das iframe im Modal
+  setTimeout(() => {
+    const modalFrame = document.getElementById('modal-frame');
+    if (modalFrame) {
+      modalFrame.innerHTML = '';
+      modalFrame.appendChild(fallbackContainer);
+      console.log('Fallback player displayed due to YouTube Error 153');
+    }
+  }, 100);
+  
+  return fallbackContainer;
+}
+
+// YouTube Video öffnen
+function openYouTubeVideo(ytId) {
+  window.open(`https://www.youtube.com/watch?v=${ytId}`, '_blank', 'noopener,noreferrer');
+}
+
+// Create an embedded YouTube player using iframe (back to working version)
+async function createEmbeddedYouTubePlayer(ytId) {
+  console.log('Creating embedded YouTube iframe for:', ytId);
+  return createYouTubeIframe(ytId);
+}
+
+// YouTube Video in neuem Tab öffnen (als Fallback)
+function playYouTubeVideo(ytId) {
+  window.open(`https://www.youtube.com/watch?v=${ytId}`, '_blank', 'noopener,noreferrer');
 }
 
 // Setup the appropriate player depending on source (YouTube or MP4)
@@ -400,66 +567,66 @@ function playVideo(video) {
 
 // Open modal and play video
 // Attach handlers to all video cards (query at runtime so DOM order doesn't matter)
-document.querySelectorAll('.video-card').forEach(card => {
-  // Preload video when hovering over card (only for MP4s)
-  card.addEventListener('mouseenter', () => {
-    const ytId = extractYouTubeID(card.dataset.video);
-    if (!ytId) {
-      const v = document.createElement('video');
-      v.src = card.dataset.video;
-      v.preload = 'auto';
-    }
-  });
-
-  card.addEventListener('click', async () => {
-    const videoSrc = card.dataset.video;
+function setupVideoCardListeners() {
+  console.log('Setting up video card listeners...');
+  const videoCards = document.querySelectorAll('.video-card');
+  console.log('Found video cards:', videoCards.length);
+  
+  videoCards.forEach((card, index) => {
+    console.log(`Setting up card ${index}:`, card.dataset.video);
     
-    try {
-      // Show loading state and modal
-      modal.classList.add('is-loading');
-      modal.classList.add('is-active');
-      modal.setAttribute('aria-hidden', 'false');
-      modalFrame.innerHTML = '<div class="modal-loader"></div>';
+    card.addEventListener('click', async (e) => {
+      e.preventDefault();
+      console.log('Card clicked!', card.dataset.video);
       
-      // Load and setup video or iframe
-      const player = await setupVideoPlayer(videoSrc);
-      currentVideo = player;
+      const videoSrc = card.dataset.video;
       
-      // Add to modal (iframe or video)
-      modalFrame.innerHTML = '';
-      modalFrame.appendChild(player);
-      modal.classList.remove('is-loading');
-  // enable keyboard focus trapping when modal is active
-  try { enableModalFocusTrap(); } catch (e) { /* ignore */ }
-      // Try autoplay if HTML5 video (iframes won't autoplay reliably)
-      if (player.tagName === 'VIDEO') {
-        try {
-          await player.play();
-        } catch (playError) {
-          const playButton = document.createElement('button');
-          playButton.className = 'modal-play-button';
-          playButton.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
-          playButton.onclick = () => { player.play().catch(console.error); playButton.remove(); };
-          modalFrame.appendChild(playButton);
+      try {
+        // Show loading state and modal
+        modal.classList.add('is-loading');
+        modal.classList.add('is-active');
+        modal.setAttribute('aria-hidden', 'false');
+        modalFrame.innerHTML = '<div class="modal-loader"></div>';
+        
+        // Load and setup video player
+        const player = await setupVideoPlayer(videoSrc);
+        currentVideo = player;
+        
+        // Add to modal
+        modalFrame.innerHTML = '';
+        modalFrame.appendChild(player);
+        modal.classList.remove('is-loading');
+        
+        try { enableModalFocusTrap(); } catch (e) { /* ignore */ }
+        
+        // Try autoplay if HTML5 video (iframes won't autoplay reliably)
+        if (player.tagName === 'VIDEO') {
+          try {
+            await player.play();
+          } catch (playError) {
+            const playButton = document.createElement('button');
+            playButton.className = 'modal-play-button';
+            playButton.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+            playButton.onclick = () => { player.play().catch(console.error); playButton.remove(); };
+            modalFrame.appendChild(playButton);
+          }
         }
+      } catch (error) {
+        console.error('Video setup failed:', error);
+        modal.classList.remove('is-loading');
+        modalFrame.innerHTML = '<div class="modal-error">Video konnte nicht geladen werden</div>';
       }
-    } catch (error) {
-      console.error('Video setup failed:', error);
-      modal.classList.remove('is-loading');
-      modalFrame.innerHTML = '<div class="modal-error">Video konnte nicht geladen werden</div>';
-    }
-    
+    });
   });
-});
+}
 
 function closeModal() {
   if (currentVideo) {
     try {
-      const tag = (currentVideo.tagName || '').toUpperCase();
-      if (tag === 'VIDEO') {
+      if (currentVideo.tagName === 'VIDEO') {
         currentVideo.pause();
-      } else if (tag === 'IFRAME') {
-        // defensively stop iframe playback (YouTube) by clearing src
+      } else if (currentVideo.tagName === 'IFRAME') {
+        // Stop iframe playback by clearing src
         try { currentVideo.src = ''; } catch (e) { /* ignore */ }
       }
     } catch (e) {
@@ -474,6 +641,9 @@ function closeModal() {
   // disable focus trap and restore last focus
   try { disableModalFocusTrap(); } catch (e) { /* ignore */ }
 }
+
+// Make closeModal globally available
+window.closeModal = closeModal;
 
 // Close modal on button click
 closeButtons.forEach(button => {
@@ -653,3 +823,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ignore
   }
 });
+
+// Make closeModal and openYouTubeVideo globally available
+window.closeModal = closeModal;
+window.openYouTubeVideo = openYouTubeVideo;
