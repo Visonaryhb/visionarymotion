@@ -1,7 +1,6 @@
 // Kontakt Popup
 const contactTrigger = document.querySelector('.contact-trigger');
 const contactPopup = document.querySelector('.contact-popup');
-const videoCards = document.querySelectorAll('.video-card');
 // use the modal element that exists in the DOM (declared in index.html)
 const modal = document.getElementById('video-modal');
 const modalFrame = modal ? modal.querySelector('#modal-frame') : null;
@@ -36,6 +35,8 @@ function extractYouTubeID(url) {
 
 // Generate thumbnail images from videos when no poster provided
 async function generateThumbnails() {
+  // query the cards at runtime to ensure any DOM reordering is respected
+  const videoCards = document.querySelectorAll('.video-card');
   videoCards.forEach(card => {
     const thumbEl = card.querySelector('.video-thumb');
     if (!thumbEl) return;
@@ -43,23 +44,44 @@ async function generateThumbnails() {
     // Add loading state
     thumbEl.classList.add('loading');
 
-    // If a data-thumb attribute is present, use it immediately (local or remote image)
+    // If a data-thumb attribute is present, attempt to load it first (local or remote image).
+    // If loading fails, fall back to YouTube thumbnail (if available).
     const explicitThumb = (card.dataset && card.dataset.thumb) ? card.dataset.thumb.trim() : null;
     if (explicitThumb) {
-      // prefer the provided thumbnail and skip generation
-      try {
-        thumbEl.style.backgroundImage = `url('${explicitThumb}')`;
-      } catch (e) {
-        // ignore invalid URLs
-      }
-      thumbEl.classList.remove('loading');
-      // ensure play icon exists
+      // ensure play icon exists (early, so it's visible during load)
       if (!card.querySelector('.play-icon')) {
         const play = document.createElement('div');
         play.className = 'play-icon';
         play.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>';
         thumbEl.appendChild(play);
       }
+
+      // Try to preload the explicit thumb so we can detect loading errors
+      try {
+        const img = new Image();
+        img.onload = () => {
+          thumbEl.style.backgroundImage = `url('${explicitThumb}')`;
+          thumbEl.classList.remove('loading');
+        };
+        img.onerror = () => {
+          // fallback to YouTube thumbnail if video is a YouTube URL
+          const ytIdFb = extractYouTubeID(card.dataset.video);
+          if (ytIdFb) {
+            thumbEl.style.backgroundImage = `url('https://img.youtube.com/vi/${ytIdFb}/hqdefault.jpg')`;
+          }
+          thumbEl.classList.remove('loading');
+        };
+        // start loading (may be cached)
+        img.src = explicitThumb;
+      } catch (e) {
+        // if anything goes wrong, try YouTube id fallback and clear loading
+        const ytIdFb = extractYouTubeID(card.dataset.video);
+        if (ytIdFb) {
+          thumbEl.style.backgroundImage = `url('https://img.youtube.com/vi/${ytIdFb}/hqdefault.jpg')`;
+        }
+        thumbEl.classList.remove('loading');
+      }
+
       return;
     }
 
@@ -319,7 +341,8 @@ function playVideo(video) {
 }
 
 // Open modal and play video
-videoCards.forEach(card => {
+// Attach handlers to all video cards (query at runtime so DOM order doesn't matter)
+document.querySelectorAll('.video-card').forEach(card => {
   // Preload video when hovering over card (only for MP4s)
   card.addEventListener('mouseenter', () => {
     const ytId = extractYouTubeID(card.dataset.video);
