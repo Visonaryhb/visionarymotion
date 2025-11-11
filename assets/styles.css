@@ -552,19 +552,32 @@ h1, h2, h3, h4 {
 }
 
 @media (max-width: 1200px) {
-  .video-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+  :root { --thumb-height-desktop: 160px; }
 
-@media (max-width: 768px) {
+  /* desktop: three columns and limit visible area to three rows (scroll if more) */
   .video-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    max-height: calc((var(--thumb-height-desktop) + 1rem) * 3 + 2rem);
+    overflow-y: auto;
+    padding-right: 0.5rem; /* space for scrollbar */
   }
-}
 
-/* Constrain thumbnails to max 3 columns x 3 rows on desktop-sized viewports */
-@media (min-width: 1024px) {
+  .video-card {
+    padding: 0.4rem;
+  }
+
+  .video-thumb {
+    height: var(--thumb-height-desktop);
+    min-height: var(--thumb-height-desktop);
+    aspect-ratio: unset;
+    background-size: cover;
+  }
+
+  .video-card .play-icon {
+    width: 48px;
+    height: 48px;
+  }
   :root { --thumb-height-desktop: 160px; }
   .video-grid {
     grid-template-columns: repeat(3, 1fr);
