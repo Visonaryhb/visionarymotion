@@ -1428,6 +1428,24 @@ html.mobile-header-hidden main {
   transform: none !important;
 }
 
+/* FINAL EMERGENCY OVERRIDE: ensure thumbnails and cards are visible above any overlay.
+   This is intentionally aggressive and will be reverted once the root cause is fixed. */
+.video-grid, .video-card, .video-thumb, .thumb-img {
+  position: relative !important;
+  z-index: 99999 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  background-color: #000 !important;
+}
+
+/* Hide potential modal/backdrop overlays that could cover the grid */
+.modal, .modal-backdrop, #video-modal {
+  display: none !important;
+  visibility: hidden !important;
+  z-index: 0 !important;
+}
+
 /* subtle hover lift (keeps existing visual treatment) */
 .video-card:hover {
   transform: translateY(-4px);
